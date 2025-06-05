@@ -158,8 +158,14 @@ Provide the link to your PUBLIC repository here: ...
 Use APA referencing throughout your document.
 
 
+<<<<<<< HEAD
+kkr app
 
 <<<<<<< HEAD
+yooooS test test 
+=======
+<<<<<<< HEAD
+Jenno stinkt man
 =======
 yooooS 
 >>>>>>> 8884d89cd25157df25cbd24e21b92dbb1e04aaa9
@@ -167,5 +173,3 @@ yooooS
 
 >>>>>>> 0f71ab08209d4b6fac97d2e3e5822e5d54267054
 >>>>>>> ff88c0ac4ab139d92ee2ea0acc6d4431890564bf
-=======
->>>>>>> bcb94aca36bac9809cd71192a5603038cfb5d2eb
