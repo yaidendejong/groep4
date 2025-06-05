@@ -1,3 +1,5 @@
+install.packages("tidyr")
+
 library(ggplot2)
 
 
