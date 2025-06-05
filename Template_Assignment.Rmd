@@ -160,11 +160,6 @@ Use APA referencing throughout your document.
 
 
 <<<<<<< HEAD
-<<<<<<< HEAD
-yooooS test test 
-=======
-<<<<<<< HEAD
-Jenno stinkt man
 =======
 yooooS 
 >>>>>>> 8884d89cd25157df25cbd24e21b92dbb1e04aaa9
