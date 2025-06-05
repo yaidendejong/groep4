@@ -158,13 +158,4 @@ Provide the link to your PUBLIC repository here: ...
 Use APA referencing throughout your document.
 
 
-<<<<<<< HEAD
-kkr app
-
-<<<<<<< HEAD
-Jenno stinkt man
-=======
-yooooS
-=======
-tes test 123
 
