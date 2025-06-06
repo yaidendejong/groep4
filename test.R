@@ -126,19 +126,19 @@ ggsave("plot.png", width = 8, height = 5)
 
 
 
-#???
-#Mean growth toevoegen aan df
-new_row <- c(
-  Year = "Growth",
-  NL = NA,
-  UK = NA,
-  US = NA,
-  Growth_NL = 2.773,
-  Growth_UK = 9.970,
-  Growth_US = 3.836
-)
-
-# Nieuwe rij toevoegen aan df
-df_sorted <- rbind(df_sorted, new_row)
+# #???
+# #Mean growth toevoegen aan df
+# new_row <- c(
+#   Year = "Growth",
+#   NL = NA,
+#   UK = NA,
+#   US = NA,
+#   Growth_NL = 2.773,
+#   Growth_UK = 9.970,
+#   Growth_US = 3.836
+# )
+# 
+# # Nieuwe rij toevoegen aan df
+# df_sorted <- rbind(df_sorted, new_row)
 
 
