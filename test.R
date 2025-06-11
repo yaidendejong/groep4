@@ -144,3 +144,8 @@ ggplot() +
   theme_bw()
 ggsave("boxplot.png", width = 8, height = 5) 
 
+
+#Inkomens
+file_names <- list.files(path = "C:/Users/Yaide/Downloads/Mean_Income_Data", pattern = "*.csv", full.names = TRUE)
+data_list <- lapply(file_names, read.csv2, stringsAsFactors = FALSE)
+
