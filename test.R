@@ -141,6 +141,6 @@ ggplot() +
   geom_boxplot(data = df_sorted, aes(y = Growth_US, x = "US", fill = "US")) +
   geom_boxplot(data = df_sorted, aes(y = Growth_UK, x = "UK", fill = "UK")) +
   labs(title = "Boxplot of Growth per Country", x = "Country", y = "Growth") +
-  theme_minimal()
-
+  theme_bw()
+ggsave("boxplot.png", width = 8, height = 5) 
 
