@@ -207,3 +207,4 @@ samengevoegd <- samengevoegd %>%
 
 View(samengevoegd)
 
+write.csv(samengevoegd, "samengevoegd.csv", row.names = FALSE)
