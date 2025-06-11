@@ -135,8 +135,11 @@ df_long <- df_sorted %>%
                names_to = "Country",
                values_to = "Growth")
 
-ggplot(df_long, aes(x = Country, y = Growth, fill = Country)) +
-  geom_boxplot() +
+
+ggplot() +
+  geom_boxplot(data = df_sorted, aes(y = Growth_NL, x = "NL", fill = "NL")) +
+  geom_boxplot(data = df_sorted, aes(y = Growth_US, x = "US", fill = "US")) +
+  geom_boxplot(data = df_sorted, aes(y = Growth_UK, x = "UK", fill = "UK")) +
   labs(title = "Boxplot of Growth per Country", x = "Country", y = "Growth") +
   theme_minimal()
 
