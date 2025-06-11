@@ -146,6 +146,64 @@ ggsave("boxplot.png", width = 8, height = 5)
 
 
 #Inkomens
-file_names <- list.files(path = "C:/Users/Yaide/Downloads/Mean_Income_Data", pattern = "*.csv", full.names = TRUE)
-data_list <- lapply(file_names, read.csv2, stringsAsFactors = FALSE)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+
+file_names <- list.files(path = "C:/Users/Yaide/Downloads/Mean_Income_Data", pattern = "income.*\\.csv", full.names = TRUE)
+
+#Alle bestanden inlezen en jaar toevoegen
+data_list <- lapply(file_names, function(f) {
+
+    year <- str_extract(f, "\\d{4}")
+  
+  df <- read.csv(f, header = FALSE, sep = ";", skip = 2, stringsAsFactors = FALSE)
+  
+
+  names(df) <- c("Country", "Wages")
+  
+
+  df$Year <- as.integer(year)
+  
+
+  df$Wages <- as.numeric(gsub(",", ".", df$Wages))
+  
+  return(df)
+})
+
+#Alles samenvoegen
+combined_df <- bind_rows(data_list)
+
+#Naar wide format
+wide_df <- combined_df %>%
+  pivot_wider(names_from = Country, values_from = Wages) %>%
+  arrange(Year) %>%
+  rename(
+    USA = `United States`,
+    NL = Netherlands,
+    UK = `United Kingdom`
+  )
+
+wide_df
+
+inkomens_per_jaar <- wide_df[ , -2]
+
+samengevoegd <- df_numeric %>%
+  left_join(inkomens_per_jaar, by = "Year"
+
+)
+
+samengevoegd <- samengevoegd %>%
+  rename(
+    studieschuld_nl = NL.x,
+    studieschuld_uk = UK.x,
+    studieschuld_us = US,
+    inkomen_nl = NL.y,
+    inkomen_uk = UK.y,
+    inkomen_us = USA
+  )
+
+View(samengevoegd)
 
