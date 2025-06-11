@@ -125,20 +125,19 @@ ggplot(df_numeric, aes(x = Year)) +
 ggsave("plot.png", width = 8, height = 5) 
 
 
+#Boxplot
+library(tidyr)
+library(dplyr)
+library(ggplot2)
 
-# #???
-# #Mean growth toevoegen aan df
-# new_row <- c(
-#   Year = "Growth",
-#   NL = NA,
-#   UK = NA,
-#   US = NA,
-#   Growth_NL = 2.773,
-#   Growth_UK = 9.970,
-#   Growth_US = 3.836
-# )
-# 
-# # Nieuwe rij toevoegen aan df
-# df_sorted <- rbind(df_sorted, new_row)
+df_long <- df_sorted %>%
+  pivot_longer(cols = c(Growth_NL, Growth_US, Growth_UK),
+               names_to = "Country",
+               values_to = "Growth")
+
+ggplot(df_long, aes(x = Country, y = Growth, fill = Country)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Growth per Country", x = "Country", y = "Growth") +
+  theme_minimal()
 
 
