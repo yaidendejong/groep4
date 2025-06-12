@@ -79,6 +79,7 @@ ggplot(df_numeric, aes(x = Year)) +
   geom_point(aes(y = (NL), color = "NL"), size = 3) +
   geom_point(aes(y = (UK), color = "UK"), size = 3) +
   geom_point(aes(y = (US), color = "US"), size = 3) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "black") + 
   annotate(
     "text",
     x = 2022.8,
@@ -122,7 +123,7 @@ ggplot(df_numeric, aes(x = Year)) +
   theme_bw()
 
 #Opslaan als PNG
-ggsave("plot.png", width = 8, height = 5) 
+ggsave("Temporal_Visualization.png", width = 8, height = 5) 
 
 
 
@@ -220,7 +221,7 @@ data_long <- data_long %>%
     period = ifelse(Year <= 2015, "2007 - 2015", "2016 - 2024")
   )
 
-# Nu het gemiddelde per land per periode berekenen
+# Gemiddelde per land per periode berekenen
 data_avg <- data_long %>%
   group_by(land, period) %>%
   summarise(studieschuld_mean = mean(studieschuld, na.rm = TRUE), .groups = "drop")
@@ -234,10 +235,20 @@ ggplot(data_avg, aes(x = period, y = studieschuld_mean)) +
 
   theme_bw()
 
+ggsave("Sub_Population.png", width = 8, height = 5) 
+
+
+
+
 install.packages(c("sf", "rnaturalearth", "rnaturalearthdata", "viridis"))
 
 
 
+
+
+
+
+#Gemiddelden 
 gemiddeld <- data %>% 
   summarise(
     studieschuld_nl = mean(studieschuld_nl, na.rm=TRUE),
@@ -262,6 +273,17 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 
 
+wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
+
+landen_kaart <- wereldkaart %>% 
+  filter(admin %in% gemiddeld$land)
+
+landen_kaart <- landen_kaart %>% 
+  left_join(gemiddeld, by = c("admin" = "land"))
+
+
+
+
 ggplot(landen_kaart) +
   geom_sf(aes(fill = gemiddelde_schuld), color = "black") +
   scale_fill_gradient(
@@ -275,10 +297,13 @@ ggplot(landen_kaart) +
     ylim = c(20, 70)     
   ) +
   
-   theme_minimal() +
+   theme_bw() +
   labs(
     title = "Mean Student Debt (2007-2024)"
   )
+ggsave("Spatial_Visualization.png", width = 8, height = 5) 
+
+
 
 
     
