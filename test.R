@@ -260,12 +260,16 @@ library(tidyverse)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
-library(viridis)
 
 
 ggplot(landen_kaart) +
   geom_sf(aes(fill = gemiddelde_schuld), color = "black") +
-  scale_fill_viridis(option = "Plasma", direction = -1, name = "Mean Student Debt") +
+  scale_fill_gradient(
+    low = "lightblue", 
+    high = "darkblue", 
+    name = "Mean Student Debt"
+  ) +
+  
   coord_sf(
     xlim = c(-130, 10), 
     ylim = c(20, 70)     
