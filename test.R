@@ -115,34 +115,16 @@ ggplot(df_numeric, aes(x = Year)) +
     limits = c(2014, NA),
     breaks = seq(2014, max(as.numeric(df_numeric$Year), na.rm = TRUE), by = 1)  # alle jaren
   ) + 
-  labs(title = "Groei in studieschuld per jaar per land",
-       x = "Jaar",
-       y = "Studieschuld (€)",
-       color = "Land") +
+  labs(title = "Growth in Student Debt per Country",
+       x = "Year",
+       y = "Student Debt",
+       color = "Country") +
   theme_bw()
 
 #Opslaan als PNG
 ggsave("plot.png", width = 8, height = 5) 
 
 
-#Boxplot
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-
-df_long <- df_sorted %>%
-  pivot_longer(cols = c(Growth_NL, Growth_US, Growth_UK),
-               names_to = "Country",
-               values_to = "Growth")
-
-
-ggplot() +
-  geom_boxplot(data = df_sorted, aes(y = Growth_NL, x = "NL", fill = "NL")) +
-  geom_boxplot(data = df_sorted, aes(y = Growth_US, x = "US", fill = "US")) +
-  geom_boxplot(data = df_sorted, aes(y = Growth_UK, x = "UK", fill = "UK")) +
-  labs(title = "Boxplot of Growth per Country", x = "Country", y = "Growth") +
-  theme_bw()
-ggsave("boxplot.png", width = 8, height = 5) 
 
 
 #Inkomens
@@ -208,3 +190,91 @@ samengevoegd <- samengevoegd %>%
 View(samengevoegd)
 
 write.csv(samengevoegd, "samengevoegd.csv", row.names = FALSE)
+
+
+
+
+
+# een categorie met over alle landen heen de studieschuld gemiddeld van de 1e helft vanje tijdsperiode
+
+
+
+# een categorie met per land de studieschuld gemiddeld van de 2e helft vanje tijdsperiode
+
+
+data_selected <- data %>%
+  select(Year, starts_with("studieschuld"))
+
+# Data omvormen naar long format
+data_long <- data_selected %>%
+  pivot_longer(
+    cols = -Year,
+    names_to = c("variabele", "land"),
+    names_pattern = "(studieschuld)_(.*)"
+  ) %>%
+  rename(studieschuld = value)
+
+# Tijdsperiode labelen
+data_long <- data_long %>%
+  mutate(
+    period = ifelse(Year <= 2015, "2007 - 2015", "2016 - 2024")
+  )
+
+# Nu het gemiddelde per land per periode berekenen
+data_avg <- data_long %>%
+  group_by(land, period) %>%
+  summarise(studieschuld_mean = mean(studieschuld, na.rm = TRUE), .groups = "drop")
+
+# Klaarzetten voor de boxplot
+ggplot(data_avg, aes(x = period, y = studieschuld_mean)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  labs(title = "Mean Student Debt per Period (All Countries)",
+       x = "Period",
+       y = "Mean Student Debt") +
+
+  theme_bw()
+
+install.packages(c("sf", "rnaturalearth", "rnaturalearthdata", "viridis"))
+
+
+
+gemiddeld <- data %>% 
+  summarise(
+    studieschuld_nl = mean(studieschuld_nl, na.rm=TRUE),
+    studieschuld_uk = mean(studieschuld_uk, na.rm=TRUE),
+    studieschuld_us = mean(studieschuld_us, na.rm=TRUE)
+  ) %>%
+  pivot_longer(everything(), names_to = "land", values_to = "gemiddelde_schuld") %>%
+  mutate(
+    land = case_when(
+      land == "studieschuld_nl" ~ "Netherlands",
+      land == "studieschuld_uk" ~ "United Kingdom",
+      land == "studieschuld_us" ~ "United States of America"
+    )
+  )
+
+
+# Wereldkaart
+
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(viridis)
+
+
+ggplot(landen_kaart) +
+  geom_sf(aes(fill = gemiddelde_schuld), color = "black") +
+  scale_fill_viridis(option = "Plasma", direction = -1, name = "Mean Student Debt") +
+  coord_sf(
+    xlim = c(-130, 10), 
+    ylim = c(20, 70)     
+  ) +
+  
+   theme_minimal() +
+  labs(
+    title = "Mean Student Debt (2007-2024)"
+  )
+
+
+    
