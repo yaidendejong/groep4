@@ -353,6 +353,22 @@ df_growth_long_UK <- df_numeric %>%
     y = "Growth compared to last year (%)"
   )
 
-
-
+  
+  # Maak de nieuwe kolommen aan
+  df_numeric_nieuw <- samengevoegd %>%
+    mutate(
+      debt_income_nl = studieschuld_nl / inkomen_nl,
+      debt_income_uk = studieschuld_uk / inkomen_uk,
+      debt_income_us = studieschuld_us / inkomen_us
+    )
+  
+  df_numeric_nieuw <- samengevoegd %>%
+    mutate(
+      debt_income_nl_pct = (studieschuld_nl / inkomen_nl) * 100,
+      debt_income_uk_pct = (studieschuld_uk / inkomen_uk) * 100,
+      debt_income_us_pct = (studieschuld_us / inkomen_us) * 100
+    )
+  
+  
+view(df_numeric_nieuw)
     
