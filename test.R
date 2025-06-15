@@ -336,11 +336,10 @@ ggsave("Temporal_Visualization2.png", width = 8, height = 5)
 
 #Procentuele groei UK pre en post brexit
 df_growth_long_UK <- df_numeric %>%
-  select(Year, Growth_UK) %>%
-  rename(groei_pct = Growth_UK)
+  select(Year, Growth_UK)
 
 
-ggplot(df_growth_long_UK, aes(x = Year, y = groei_pct)) +
+  ggplot(data = df_growth_long_UK, aes(x = Year, y = Growth_UK)) +
   geom_line(color = "blue", size = 1.2) +
   geom_point(color = "blue") +
   geom_vline(xintercept = 2016, linetype = "dashed", color = "red", size = 1) +
