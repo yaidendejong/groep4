@@ -302,5 +302,31 @@ ggsave("Spatial_Visualization.png", width = 8, height = 5)
 
 
 
+#Procentuele groei per jaar
+df_growth_long <- df_numeric %>%
+  select(Year, Growth_NL, Growth_UK, Growth_US) %>%
+  pivot_longer(
+    cols = starts_with("Growth_"),
+    names_to = "land",
+    names_prefix = "Growth_",
+    values_to = "groei_pct"
+  )
+
+df_growth_long %>%
+  filter(Year >= 2014) %>%
+  ggplot(aes(x = Year, y = groei_pct, color = land)) +
+  geom_line(size = 1.2) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_bw() +
+  labs(
+    title = "Procentual Growth of Student Debt (Since 2014)",
+    x = "Year",
+    y = "Growth compared to last year (%)",
+    color = "Country"
+  )
+
+ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
 
     
