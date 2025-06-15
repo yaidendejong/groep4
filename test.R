@@ -313,12 +313,13 @@ df_growth_long <- df_numeric %>%
   )
 
 df_growth_long %>%
-  filter(Year >= 2014) %>%
+  filter(Year >= 2015) %>%
   ggplot(aes(x = Year, y = groei_pct, color = land)) +
   geom_line(size = 1.2) +
   geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  scale_x_continuous(breaks = 2015:2024) +
   theme_bw() +
   labs(
     title = "Procentual Growth of Student Debt (Since 2014)",
@@ -328,5 +329,31 @@ df_growth_long %>%
   )
 
 ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
+
+
+
+
+
+#Procentuele groei UK pre en post brexit
+df_growth_long_UK <- df_numeric %>%
+  select(Year, Growth_UK) %>%
+  rename(groei_pct = Growth_UK)
+
+
+ggplot(df_growth_long_UK, aes(x = Year, y = groei_pct)) +
+  geom_line(color = "blue", size = 1.2) +
+  geom_point(color = "blue") +
+  geom_vline(xintercept = 2016, linetype = "dashed", color = "red", size = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  scale_x_continuous(breaks = 2008:2024) +
+  theme_bw() +
+  labs(
+    title = "Percentage Growth of UK Student Debt before and after Brexit (2016)",
+    x = "Year",
+    y = "Growth compared to last year (%)"
+  )
+
+
 
     
