@@ -79,7 +79,7 @@ ggplot(df_numeric, aes(x = Year)) +
   geom_point(aes(y = (NL), color = "NL"), size = 3) +
   geom_point(aes(y = (UK), color = "UK"), size = 3) +
   geom_point(aes(y = (US), color = "US"), size = 3) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "black") + 
+  geom_vline(xintercept = 2020.3, linetype = "dashed", color = "black") + 
   annotate(
     "text",
     x = 2022.8,
