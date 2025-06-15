@@ -273,34 +273,31 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 
 
+
 wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
 
-landen_kaart <- wereldkaart %>% 
-  filter(admin %in% gemiddeld$land)
 
-landen_kaart <- landen_kaart %>% 
+wereldkaart_met_data <- wereldkaart %>%
   left_join(gemiddeld, by = c("admin" = "land"))
 
 
-
-
-ggplot(landen_kaart) +
+ggplot(wereldkaart_met_data) +
   geom_sf(aes(fill = gemiddelde_schuld), color = "black") +
   scale_fill_gradient(
     low = "lightblue", 
     high = "darkblue", 
+    na.value = "lightgrey",      # <- grijs voor landen zonder data
     name = "Mean Student Debt"
   ) +
-  
   coord_sf(
     xlim = c(-130, 10), 
-    ylim = c(20, 70)     
+    ylim = c(20, 70)
   ) +
-  
-   theme_bw() +
-  labs(
-    title = "Mean Student Debt (2007-2024)"
-  )
+  theme_bw() +
+  labs(title = "Mean Student Debt (2007–2024)")
+
+
+
 ggsave("Spatial_Visualization.png", width = 8, height = 5) 
 
 
