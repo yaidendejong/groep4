@@ -84,7 +84,7 @@ ggplot(df_numeric, aes(x = Year)) +
     "text",
     x = 2022.8,
     y = as.numeric(df_numeric$NL[df_numeric$Year == "2024"]) -5000,
-    label = paste0("Mean growth NL:\n", round(NL_Mean_Growth, 2), "%"),
+    label = paste0("Mean growth NL: ", round(NL_Mean_Growth, 2), "%"),
     hjust = 0,
     color = "black",
     fontface = "bold",
@@ -94,7 +94,7 @@ ggplot(df_numeric, aes(x = Year)) +
     "text",
     x = 2022.8,
     y = as.numeric(df_numeric$UK[df_numeric$Year == "2024"]) -7000,
-    label = paste0("Mean growth UK:\n", round(UK_Mean_Growth, 2), "%"),
+    label = paste0("Mean growth UK: ", round(UK_Mean_Growth, 2), "%"),
     hjust = 0,
     color = "black",
     fontface = "bold",
@@ -104,7 +104,7 @@ ggplot(df_numeric, aes(x = Year)) +
     "text",
     x = 2022.8,
     y = as.numeric(df_numeric$US[df_numeric$Year == "2024"]) -5000,
-    label = paste0("Mean growth US:\n", round(US_Mean_Growth, 2), "%"),
+    label = paste0("Mean growth US: ", round(US_Mean_Growth, 2), "%"),
     hjust = 0,
     color = "black",
     fontface = "bold",
@@ -116,7 +116,7 @@ ggplot(df_numeric, aes(x = Year)) +
     limits = c(2014, NA),
     breaks = seq(2014, max(as.numeric(df_numeric$Year), na.rm = TRUE), by = 1)  # alle jaren
   ) + 
-  labs(title = "Growth in Student Debt per Country",
+  labs(title = "Growth in Student Debt per Country pre- and post-Covid-19",
        x = "Year",
        y = "Student Debt",
        color = "Country") +
@@ -348,7 +348,7 @@ df_growth_long_UK <- df_numeric %>%
   scale_x_continuous(breaks = 2008:2024) +
   theme_bw() +
   labs(
-    title = "Percentage Growth of UK Student Debt before and after Brexit (2016)",
+    title = "Percentage Growth of UK Student Debt pre- and post Brexit (2016)",
     x = "Year",
     y = "Growth compared to last year (%)"
   )
