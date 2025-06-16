@@ -1,11 +1,24 @@
-#Packages downloaden
+# ---- PACKAGES ----
 install.packages("tidyverse")
 install.packages("dplyr")
 install.packages("ggplot2")
+install.packages("scales")
+install.packages("sf") 
+install.packages("rnaturalearth")
+install.packages("rnaturalearthdata")
+install.packages("viridis")
+library(scales)
 library(tidyr)
 library(dplyr)
 library(readxl)
 library(ggplot2)
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+# ---- DATA CLEANING EN MERGING ----
+
 
 #Dataframe maken van excel-bestand
 df1 <- read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
@@ -79,16 +92,16 @@ df_numeric <- df_numeric %>%
   mutate(Studieschuld_UK = Studieschuld_UK * 1.17)
 
 
-
+# ---- EXTRA GRAFIEK ? ----
 
 #Grafiek
 ggplot(df_numeric, aes(x = Year)) +
-  geom_line(aes(y = NL, color = "NL"), size = 1.5) +
-  geom_line(aes(y = UK, color = "UK"), size = 1.5) +
-  geom_line(aes(y = US, color = "US"), size = 1.5) +
-  geom_point(aes(y = (NL), color = "NL"), size = 3) +
-  geom_point(aes(y = (UK), color = "UK"), size = 3) +
-  geom_point(aes(y = (US), color = "US"), size = 3) +
+  geom_line(aes(y = Studieschuld_NL, color = "NL"), size = 1.5) +
+  geom_line(aes(y = Studieschuld_UK, color = "UK"), size = 1.5) +
+  geom_line(aes(y = Studieschuld_US, color = "US"), size = 1.5) +
+  geom_point(aes(y = (Studieschuld_NL), color = "NL"), size = 3) +
+  geom_point(aes(y = (Studieschuld_UK), color = "UK"), size = 3) +
+  geom_point(aes(y = (Studieschuld_US), color = "US"), size = 3) +
   geom_vline(xintercept = 2020.3, linetype = "dashed", color = "black") + 
   annotate(
     "text",
@@ -123,9 +136,9 @@ ggplot(df_numeric, aes(x = Year)) +
     limits = c(2014, NA),
     breaks = seq(2014, max(as.numeric(df_numeric$Year), na.rm = TRUE), by = 1)  # alle jaren
   ) + 
-  labs(title = "Growth in Student Debt per Country pre- and post-Covid-19",
+  labs(title = "Growth in Student Debt per Country",
        x = "Year",
-       y = "Student Debt",
+       y = "Student Debt (€)",
        color = "Country") +
   theme_bw()
 
@@ -134,14 +147,7 @@ ggsave("Temporal_Visualization.png", width = 8, height = 5)
 
 
 
-
-
-# een categorie met over alle landen heen de studieschuld gemiddeld van de 1e helft vanje tijdsperiode
-
-
-
-# een categorie met per land de studieschuld gemiddeld van de 2e helft vanje tijdsperiode
-
+# ---- SUB POPULATION ----
 
 data_selected <- df_numeric %>%
   select(Year, starts_with("Studieschuld"))
@@ -158,8 +164,12 @@ data_long <- data_selected %>%
 # Tijdsperiode labelen
 data_long <- data_long %>%
   mutate(
-    period = ifelse(Year <= 2015, "2007 - 2015", "2016 - 2024")
+    period = case_when(
+      Year <= 2019 ~ "2014 - 2019",  
+      Year > 2019 ~ "2020 - 2024"
+    )
   )
+
 
 # Gemiddelde per land per periode berekenen
 data_avg <- data_long %>%
@@ -172,7 +182,7 @@ ggplot(data_avg, aes(x = period, y = studieschuld_mean)) +
   labs(title = "Mean Student Debt per Period (All Countries)",
        x = "Period",
        y = "Mean Student Debt") +
-
+  scale_y_continuous(labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")) +
   theme_bw()
 
 ggsave("Sub_Population.png", width = 8, height = 5) 
@@ -180,13 +190,9 @@ ggsave("Sub_Population.png", width = 8, height = 5)
 
 
 
-install.packages(c("sf", "rnaturalearth", "rnaturalearthdata", "viridis"))
 
 
-
-
-
-
+# ---- SPATIAL VISUALIZATION ----
 
 #Gemiddelden 
 gemiddelde <- data_selected %>% 
@@ -206,14 +212,6 @@ gemiddelde <- data_selected %>%
 
 
 # Wereldkaart
-
-library(tidyverse)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
-
-
-
 wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
 
 
@@ -240,7 +238,7 @@ ggplot(wereldkaart_met_data) +
 
 ggsave("Spatial_Visualization.png", width = 8, height = 5) 
 
-
+# ---- TEMPORAL VISUALIZATION ----
 
 #Procentuele groei per jaar
 df_growth_long <- df_numeric %>%
@@ -271,7 +269,9 @@ df_growth_long %>%
 ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
 
 
-#Plot 5
+# ---- EVENT ANALYSIS ----
+
+#GDP per capita data inlezen, cleanen en mergen
 gdp_per_capita_data <- read_xlsx("gdp_per_capita2.xlsx")
 
 
@@ -345,8 +345,6 @@ df_merged <- df_merged %>%
 
 view(df_merged)
 
-
-library(tidyr)
 
 df_long <- df_merged %>%
   select(Year, Schuld_GDP_NL, Schuld_GDP_UK, Schuld_GDP_US) %>%
