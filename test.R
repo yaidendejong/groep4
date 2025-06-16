@@ -299,13 +299,13 @@ df_gdp <- df_gdp %>%
 df_gdp_long <- df_gdp %>%
   pivot_longer(
     cols = -`Country Name`,
-    names_to = "Jaar",
+    names_to = "Year",
     values_to = "GDP_PC"
   )
 
 # Eventueel converteren we de getallen van character naar numeric
 df_gdp_long$GDP_PC <- as.numeric(df_gdp_long$GDP_PC)
-df_gdp_long$Jaar <- as.integer(df_gdp_long$Jaar)
+df_gdp_long$Year <- as.integer(df_gdp_long$Year)
 
 # Vervolgens naar breed formaat
 df_gdp_wide <- df_gdp_long %>%
@@ -318,9 +318,22 @@ df_gdp_wide <- df_gdp_long %>%
     GDP_PC_NL = Netherlands,
     GDP_PC_US = `United States`
   ) %>%
-  arrange(Jaar)
+  arrange(Year)
 
 df_gdp_wide
 
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(GDP_PC_UK = GDP_PC_UK * 0.85)
 
-    
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(GDP_PC_NL = GDP_PC_NL * 0.85)
+
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(GDP_PC_US = GDP_PC_US * 0.85)
+
+
+df_numeric
+
+df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
+
+
