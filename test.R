@@ -16,6 +16,7 @@ library(tidyverse)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+theme_set(theme_bw())
 
 # ---- DATA CLEANING EN MERGING ----
 
@@ -102,11 +103,11 @@ ggplot(df_numeric, aes(x = Year)) +
   geom_point(aes(y = (Studieschuld_NL), color = "NL"), size = 3) +
   geom_point(aes(y = (Studieschuld_UK), color = "UK"), size = 3) +
   geom_point(aes(y = (Studieschuld_US), color = "US"), size = 3) +
-  geom_vline(xintercept = 2020.3, linetype = "dashed", color = "black") + 
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "darkred") + 
   annotate(
     "text",
     x = 2023,
-    y = as.numeric(df_numeric$NL[df_numeric$Year == "2024"]) -5000,
+    y = 12500,
     label = paste0("Mean growth NL: ", round(NL_Mean_Growth, 2), "%"),
     color = "black",
     fontface = "bold",
@@ -115,7 +116,7 @@ ggplot(df_numeric, aes(x = Year)) +
   annotate(
     "text",
     x = 2023,
-    y = as.numeric(df_numeric$UK[df_numeric$Year == "2024"]) -7000,
+    y = 58000,
     label = paste0("Mean growth UK: ", round(UK_Mean_Growth, 2), "%"),
     color = "black",
     fontface = "bold",
@@ -124,13 +125,21 @@ ggplot(df_numeric, aes(x = Year)) +
   annotate(
     "text",
     x = 2023,
-    y = as.numeric(df_numeric$US[df_numeric$Year == "2024"]) -5000,
+    y = 47000,
     label = paste0("Mean growth US: ", round(US_Mean_Growth, 2), "%"),
     color = "black",
     fontface = "bold",
     size = 3
   ) +
-  
+  annotate(
+    "text",
+    x = 2020.7,
+    y = 2500,
+    label = paste0(" Start Covid-19"),
+    color = "black",
+    fontface = "bold",
+    size = 3
+  ) +
   
   scale_x_continuous(
     limits = c(2014, NA),
@@ -138,8 +147,16 @@ ggplot(df_numeric, aes(x = Year)) +
   ) + 
   labs(title = "Growth in Student Debt per Country",
        x = "Year",
-       y = "Student Debt (€)",
+       y = "Student Debt",
        color = "Country") +
+
+  scale_y_continuous(
+    limits = c(0, 60000),
+    expand = c(0, 0),
+    labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")
+  )
+
+  
   theme_bw()
 
 #Opslaan als PNG
@@ -176,7 +193,7 @@ data_avg <- data_long %>%
   group_by(land, period) %>%
   summarise(studieschuld_mean = mean(studieschuld, na.rm = TRUE), .groups = "drop")
 
-# Klaarzetten voor de boxplot
+# Boxplot
 ggplot(data_avg, aes(x = period, y = studieschuld_mean)) +
   geom_boxplot(fill = "lightblue", color = "darkblue") +
   labs(title = "Mean Student Debt per Period (All Countries)",
@@ -188,6 +205,26 @@ ggplot(data_avg, aes(x = period, y = studieschuld_mean)) +
 ggsave("Sub_Population.png", width = 8, height = 5) 
 
 
+
+# # Alleen per periode groep maken (alle landen en jaren samen)
+# data_period <- data_long %>%
+#   group_by(period) %>%
+#   summarise(
+#     mean_studieschuld = mean(studieschuld, na.rm = TRUE),
+#     sd_studieschuld = sd(studieschuld, na.rm = TRUE),
+#     min_studieschuld = min(studieschuld, na.rm = TRUE),
+#     max_studieschuld = max(studieschuld, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# 
+# ggplot(data_long, aes(x = period, y = studieschuld)) +
+#   geom_boxplot(fill = "lightblue", color = "darkblue") +
+#   labs(title = "Student Debt Distribution per Period (All Countries and Years)",
+#        x = "Period",
+#        y = "Student Debt") +
+#   scale_y_continuous(labels = scales::label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")) +
+#   theme_bw()
 
 
 
@@ -203,10 +240,10 @@ gemiddelde <- data_selected %>%
   ) %>%
   pivot_longer(everything(), names_to = "land", values_to = "gemiddelde_schuld") %>%
   mutate(
-    land = case_when(
-      land == "Studieschuld_NL" ~ "Netherlands",
-      land == "Studieschuld_UK" ~ "United Kingdom",
-      land == "Studieschuld_US" ~ "United States of America"
+    land = recode(land,
+        Studieschuld_NL = "Netherlands",
+        Studieschuld_UK = "United Kingdom",
+        Studieschuld_US = "United States of America"
     )
   )
 
@@ -216,7 +253,7 @@ wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
 
 
 wereldkaart_met_data <- wereldkaart %>%
-  left_join(gemiddeld, by = c("admin" = "land"))
+  left_join(gemiddelde, by = c("admin" = "land"))
 
 
 ggplot(wereldkaart_met_data) +
@@ -225,14 +262,24 @@ ggplot(wereldkaart_met_data) +
     low = "lightblue", 
     high = "darkblue", 
     na.value = "lightgrey",      # <- grijs voor landen zonder data
-    name = "Mean Student Debt (€)"
+    name = "Mean Student Debt (€)",
+    labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")
   ) +
   coord_sf(
-    xlim = c(-130, 10), 
-    ylim = c(20, 70)
-  ) +
-  theme_bw() +
-  labs(title = "Mean Student Debt (€) (2007–2024)")
+    crs = 3857,
+    xlim = c(-1.35e7, 0.4e6),   # links (VS) tot rechts (NL)
+    ylim = c(2.2e6, 8e6)       # onder (VS zuid) tot boven (UK / NL noord)
+  )
+
+  labs(title = "Mean Student Debt (€) (2007–2024)") +  
+  theme_bw()
+
+  
+landen_selectie <- c("Netherlands", "United Kingdom", "United States of America")
+
+
+  
+  
 
 
 
