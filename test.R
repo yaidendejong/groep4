@@ -277,12 +277,6 @@ ggplot(wereldkaart_met_data) +
   
 landen_selectie <- c("Netherlands", "United Kingdom", "United States of America")
 
-
-  
-  
-
-
-
 ggsave("Spatial_Visualization.png", width = 8, height = 5) 
 
 # ---- TEMPORAL VISUALIZATION ----
@@ -294,12 +288,12 @@ df_growth_long <- df_numeric %>%
     cols = starts_with("Growth_"),
     names_to = "land",
     names_prefix = "Growth_",
-    values_to = "groei_pct"
+    values_to = "groei_percentage"
   )
 
 df_growth_long %>%
   filter(Year >= 2015) %>%
-  ggplot(aes(x = Year, y = groei_pct, color = land)) +
+  ggplot(aes(x = Year, y = groei_percentage, color = land)) +
   geom_line(size = 1.2) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
@@ -322,27 +316,14 @@ ggsave("Temporal_Visualization2.png", width = 8, height = 5)
 gdp_per_capita_data <- read_xlsx("gdp_per_capita2.xlsx")
 
 
-head(gdp_per_capita_data)
-str(gdp_per_capita_data)
-
-
-
-# De derde rij bevat de jaar-kolomnamen. We extraheren deze.
 jaar_kolommen <- as.character(unlist(gdp_per_capita_data[3, ]))
-# Sommige kolommen heten nog NA, die maken we netjes
+
 jaar_kolommen[is.na(jaar_kolommen)] <- paste0("V", which(is.na(jaar_kolommen)))
-
-# De echte data begint vanaf rij 4
 df_gdp <- gdp_per_capita_data[4:6, ]
-
-# We zetten de kolomnamen goed
 colnames(df_gdp) <- jaar_kolommen
-
-# We selecteren alleen de relevante kolommen: Land en de jaren
 df_gdp <- df_gdp %>%
   select(`Country Name`, `2007`:`2023`)
 
-# Nu zetten we de data in long format
 df_gdp_long <- df_gdp %>%
   pivot_longer(
     cols = -`Country Name`,
@@ -350,7 +331,6 @@ df_gdp_long <- df_gdp %>%
     values_to = "GDP_PC"
   )
 
-# Eventueel converteren we de getallen van character naar numeric
 df_gdp_long$GDP_PC <- as.numeric(df_gdp_long$GDP_PC)
 df_gdp_long$Year <- as.integer(df_gdp_long$Year)
 
@@ -367,8 +347,9 @@ df_gdp_wide <- df_gdp_long %>%
   ) %>%
   arrange(Year)
 
-df_gdp_wide
 
+
+#Omzetten van Dollars naar Euro's
 df_gdp_wide <- df_gdp_wide %>%
   mutate(GDP_PC_UK = GDP_PC_UK * 0.85)
 
@@ -379,8 +360,8 @@ df_gdp_wide <- df_gdp_wide %>%
   mutate(GDP_PC_US = GDP_PC_US * 0.85)
 
 
-df_numeric
 
+#Samenvoegen met alle andere data en nieuwe variabele maken
 df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
 
 df_merged <- df_merged %>%
@@ -390,9 +371,8 @@ df_merged <- df_merged %>%
     Schuld_GDP_US = 100 * Studieschuld_US / GDP_PC_US
   )
 
-view(df_merged)
 
-
+#Plot maken
 df_long <- df_merged %>%
   select(Year, Schuld_GDP_NL, Schuld_GDP_UK, Schuld_GDP_US) %>%
   pivot_longer(
