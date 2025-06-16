@@ -271,12 +271,56 @@ df_growth_long %>%
 ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
 
 
-
 #Plot 5
-gdp_per_capita_data <- read_xls()
+gdp_per_capita_data <- read_xlsx("gdp_per_capita2.xlsx")
+
+
+head(gdp_per_capita_data)
+str(gdp_per_capita_data)
 
 
 
+# De derde rij bevat de jaar-kolomnamen. We extraheren deze.
+jaar_kolommen <- as.character(unlist(gdp_per_capita_data[3, ]))
+# Sommige kolommen heten nog NA, die maken we netjes
+jaar_kolommen[is.na(jaar_kolommen)] <- paste0("V", which(is.na(jaar_kolommen)))
+
+# De echte data begint vanaf rij 4
+df_gdp <- gdp_per_capita_data[4:6, ]
+
+# We zetten de kolomnamen goed
+colnames(df_gdp) <- jaar_kolommen
+
+# We selecteren alleen de relevante kolommen: Land en de jaren
+df_gdp <- df_gdp %>%
+  select(`Country Name`, `2007`:`2023`)
+
+# Nu zetten we de data in long format
+df_gdp_long <- df_gdp %>%
+  pivot_longer(
+    cols = -`Country Name`,
+    names_to = "Jaar",
+    values_to = "GDP_PC"
+  )
+
+# Eventueel converteren we de getallen van character naar numeric
+df_gdp_long$GDP_PC <- as.numeric(df_gdp_long$GDP_PC)
+df_gdp_long$Jaar <- as.integer(df_gdp_long$Jaar)
+
+# Vervolgens naar breed formaat
+df_gdp_wide <- df_gdp_long %>%
+  pivot_wider(
+    names_from = `Country Name`,
+    values_from = GDP_PC
+  ) %>%
+  rename(
+    GDP_PC_UK = `United Kingdom`,
+    GDP_PC_NL = Netherlands,
+    GDP_PC_US = `United States`
+  ) %>%
+  arrange(Jaar)
+
+df_gdp_wide
 
 
     
