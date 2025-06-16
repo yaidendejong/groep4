@@ -357,22 +357,26 @@ df_long <- df_merged %>%
   ) %>%
   mutate(
     Land = case_when(
-      Land == "Schuld_GDP_NL" ~ "Nederland",
-      Land == "Schuld_GDP_UK" ~ "Verenigd Koninkrijk",
-      Land == "Schuld_GDP_US" ~ "Verenigde Staten"
+      Land == "Schuld_GDP_NL" ~ "NL",
+      Land == "Schuld_GDP_UK" ~ "UK",
+      Land == "Schuld_GDP_US" ~ "US"
     )
   )
 
-
-ggplot(df_long, aes(x = Year, y = Schuld_GDP, color = Land)) +
+df_long %>%
+  filter(Year >= 2015, Year <= 2023) %>%
+  ggplot(aes(x = Year, y = Schuld_GDP, color = Land)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
   labs(
-    title = "Studieschuld als percentage van GDP per capita",
-    x = "Jaar",
-    y = "Studieschuld / GDP per capita (%)",
+    title = "Student Debt as percentage of GDP per capita",
+    x = "Year",
+    y = "Student Debt / GDP per capita (%)",
     color = "Land"
   ) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # als het al in %, anders scale=100
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  scale_x_continuous(breaks = 2014:2023) 
   theme_bw()
+
+ggsave("Event_Analysis.png", width = 8, height = 5) 
 
