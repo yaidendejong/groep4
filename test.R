@@ -50,18 +50,18 @@ df_sorted <- df_merge[order(df_merge$Year, decreasing = FALSE), ]
 
 
 # Alles numeriek maken
-df_sorted$NL <- as.numeric(df_sorted$NL)
-df_sorted$UK <- as.numeric(df_sorted$UK)
-df_sorted$US <- as.numeric(df_sorted$US)
+df_sorted$Studieschuld_NL <- as.numeric(df_sorted$Studieschuld_NL)
+df_sorted$Studieschuld_UK <- as.numeric(df_sorted$Studieschuld_UK)
+df_sorted$Studieschuld_US <- as.numeric(df_sorted$Studieschuld_US)
 
 # Nieuwe Variabele: Jaarlijkse groei berekenen (percentage)
-df_sorted$Growth_NL <- c(NA, diff(df_sorted$NL) / head(df_sorted$NL, -1) * 100)
-df_sorted$Growth_UK <- c(NA, diff(df_sorted$UK) / head(df_sorted$UK, -1) * 100)
-df_sorted$Growth_US <- c(NA, diff(df_sorted$US) / head(df_sorted$US, -1) * 100)
+df_sorted$Growth_NL <- c(NA, diff(df_sorted$Studieschuld_NL) / head(df_sorted$Studieschuld_NL, -1) * 100)
+df_sorted$Growth_UK <- c(NA, diff(df_sorted$Studieschuld_UK) / head(df_sorted$Studieschuld_UK, -1) * 100)
+df_sorted$Growth_US <- c(NA, diff(df_sorted$Studieschuld_US) / head(df_sorted$Studieschuld_US, -1) * 100)
 
 #Kolommen omzetten in numeriek
 df_numeric <- df_sorted %>%
-  mutate(across(c(NL, UK, US, Growth_NL, Growth_UK, Growth_US), ~as.numeric(.)),
+  mutate(across(c(Studieschuld_NL, Studieschuld_UK, Studieschuld_US, Growth_NL, Growth_UK, Growth_US), ~as.numeric(.)),
          Year = as.numeric(Year))
 
 #Gemiddelde growth uitrekenen
@@ -73,10 +73,10 @@ US_Mean_Growth = mean(df_sorted$Growth_US, na.rm = TRUE)
 #Alles in Euros
 
 df_numeric <- df_numeric %>%
-  mutate(US = US * 0.86)
+  mutate(Studieschuld_US = Studieschuld_US * 0.86)
 
 df_numeric <- df_numeric %>%
-  mutate(UK = UK * 1.17)
+  mutate(Studieschuld_UK = Studieschuld_UK * 1.17)
 
 
 
@@ -144,14 +144,14 @@ ggsave("Temporal_Visualization.png", width = 8, height = 5)
 
 
 data_selected <- df_numeric %>%
-  select(Year, starts_with("studieschuld"))
+  select(Year, starts_with("Studieschuld"))
 
 # Data omvormen naar long format
 data_long <- data_selected %>%
   pivot_longer(
     cols = -Year,
     names_to = c("variabele", "land"),
-    names_pattern = "(studieschuld)_(.*)"
+    names_pattern = "(Studieschuld)_(.*)"
   ) %>%
   rename(studieschuld = value)
 
@@ -189,18 +189,18 @@ install.packages(c("sf", "rnaturalearth", "rnaturalearthdata", "viridis"))
 
 
 #Gemiddelden 
-gemiddeld <- data %>% 
+gemiddelde <- data_selected %>% 
   summarise(
-    studieschuld_nl = mean(studieschuld_nl, na.rm=TRUE),
-    studieschuld_uk = mean(studieschuld_uk, na.rm=TRUE),
-    studieschuld_us = mean(studieschuld_us, na.rm=TRUE)
+    Studieschuld_NL = mean(Studieschuld_NL, na.rm=TRUE),
+    Studieschuld_UK = mean(Studieschuld_UK, na.rm=TRUE),
+    Studieschuld_US = mean(Studieschuld_US, na.rm=TRUE)
   ) %>%
   pivot_longer(everything(), names_to = "land", values_to = "gemiddelde_schuld") %>%
   mutate(
     land = case_when(
-      land == "studieschuld_nl" ~ "Netherlands",
-      land == "studieschuld_uk" ~ "United Kingdom",
-      land == "studieschuld_us" ~ "United States of America"
+      land == "Studieschuld_NL" ~ "Netherlands",
+      land == "Studieschuld_UK" ~ "United Kingdom",
+      land == "Studieschuld_US" ~ "United States of America"
     )
   )
 
@@ -227,14 +227,14 @@ ggplot(wereldkaart_met_data) +
     low = "lightblue", 
     high = "darkblue", 
     na.value = "lightgrey",      # <- grijs voor landen zonder data
-    name = "Mean Student Debt"
+    name = "Mean Student Debt (€)"
   ) +
   coord_sf(
     xlim = c(-130, 10), 
     ylim = c(20, 70)
   ) +
   theme_bw() +
-  labs(title = "Mean Student Debt (2007–2024)")
+  labs(title = "Mean Student Debt (€) (2007–2024)")
 
 
 
@@ -269,6 +269,14 @@ df_growth_long %>%
   )
 
 ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
+
+
+
+#Plot 5
+gdp_per_capita_data <- read_xls()
+
+
+
 
 
     
