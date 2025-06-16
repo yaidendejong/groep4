@@ -336,4 +336,43 @@ df_numeric
 
 df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
 
+df_merged <- df_merged %>%
+  mutate(
+    Schuld_GDP_NL = 100 * Studieschuld_NL / GDP_PC_NL,
+    Schuld_GDP_UK = 100 * Studieschuld_UK / GDP_PC_UK,
+    Schuld_GDP_US = 100 * Studieschuld_US / GDP_PC_US
+  )
+
+view(df_merged)
+
+
+library(tidyr)
+
+df_long <- df_merged %>%
+  select(Year, Schuld_GDP_NL, Schuld_GDP_UK, Schuld_GDP_US) %>%
+  pivot_longer(
+    cols = starts_with("Schuld_GDP"),
+    names_to = "Land",
+    values_to = "Schuld_GDP"
+  ) %>%
+  mutate(
+    Land = case_when(
+      Land == "Schuld_GDP_NL" ~ "Nederland",
+      Land == "Schuld_GDP_UK" ~ "Verenigd Koninkrijk",
+      Land == "Schuld_GDP_US" ~ "Verenigde Staten"
+    )
+  )
+
+
+ggplot(df_long, aes(x = Year, y = Schuld_GDP, color = Land)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  labs(
+    title = "Studieschuld als percentage van GDP per capita",
+    x = "Jaar",
+    y = "Studieschuld / GDP per capita (%)",
+    color = "Land"
+  ) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # als het al in %, anders scale=100
+  theme_bw()
 
