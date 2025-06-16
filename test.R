@@ -82,30 +82,27 @@ ggplot(df_numeric, aes(x = Year)) +
   geom_vline(xintercept = 2020.3, linetype = "dashed", color = "black") + 
   annotate(
     "text",
-    x = 2022.8,
+    x = 2023,
     y = as.numeric(df_numeric$NL[df_numeric$Year == "2024"]) -5000,
     label = paste0("Mean growth NL: ", round(NL_Mean_Growth, 2), "%"),
-    hjust = 0,
     color = "black",
     fontface = "bold",
     size = 3
   ) +
   annotate(
     "text",
-    x = 2022.8,
+    x = 2023,
     y = as.numeric(df_numeric$UK[df_numeric$Year == "2024"]) -7000,
     label = paste0("Mean growth UK: ", round(UK_Mean_Growth, 2), "%"),
-    hjust = 0,
     color = "black",
     fontface = "bold",
     size = 3
   ) +
   annotate(
     "text",
-    x = 2022.8,
+    x = 2023,
     y = as.numeric(df_numeric$US[df_numeric$Year == "2024"]) -5000,
     label = paste0("Mean growth US: ", round(US_Mean_Growth, 2), "%"),
-    hjust = 0,
     color = "black",
     fontface = "bold",
     size = 3
@@ -331,44 +328,4 @@ df_growth_long %>%
 ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
 
 
-
-
-
-#Procentuele groei UK pre en post brexit
-df_growth_long_UK <- df_numeric %>%
-  select(Year, Growth_UK)
-
-
-  ggplot(data = df_growth_long_UK, aes(x = Year, y = Growth_UK)) +
-  geom_line(color = "blue", size = 1.2) +
-  geom_point(color = "blue") +
-  geom_vline(xintercept = 2016, linetype = "dashed", color = "red", size = 1) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  scale_x_continuous(breaks = 2008:2024) +
-  theme_bw() +
-  labs(
-    title = "Percentage Growth of UK Student Debt pre- and post Brexit (2016)",
-    x = "Year",
-    y = "Growth compared to last year (%)"
-  )
-
-  
-  # Maak de nieuwe kolommen aan
-  df_numeric_nieuw <- samengevoegd %>%
-    mutate(
-      debt_income_nl = studieschuld_nl / inkomen_nl,
-      debt_income_uk = studieschuld_uk / inkomen_uk,
-      debt_income_us = studieschuld_us / inkomen_us
-    )
-  
-  df_numeric_nieuw <- samengevoegd %>%
-    mutate(
-      debt_income_nl_pct = (studieschuld_nl / inkomen_nl) * 100,
-      debt_income_uk_pct = (studieschuld_uk / inkomen_uk) * 100,
-      debt_income_us_pct = (studieschuld_us / inkomen_us) * 100
-    )
-  
-  
-view(df_numeric_nieuw)
     
