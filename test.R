@@ -418,6 +418,3 @@ df_long %>%
   theme_bw()
 
 ggsave("Event_Analysis.png", width = 8, height = 5) 
-
-
-
