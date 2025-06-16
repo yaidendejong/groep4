@@ -268,14 +268,13 @@ ggplot(wereldkaart_met_data) +
   coord_sf(
     crs = 3857,
     xlim = c(-1.35e7, 0.4e6),   # links (VS) tot rechts (NL)
-    ylim = c(2.2e6, 8e6)       # onder (VS zuid) tot boven (UK / NL noord)
-  )
+    ylim = c(2.2e6, 8e6)       # onder (VS zuid) tot boven (UK noord)
+  ) +
 
-  labs(title = "Mean Student Debt (€) (2007–2024)") +  
+  labs(title = "Mean Student Debt (2007–2024)") +  
   theme_bw()
 
-  
-landen_selectie <- c("Netherlands", "United Kingdom", "United States of America")
+
 
 ggsave("Spatial_Visualization.png", width = 8, height = 5) 
 
@@ -351,10 +350,10 @@ df_gdp_wide <- df_gdp_long %>%
 
 #Omzetten van Dollars naar Euro's
 df_gdp_wide <- df_gdp_wide %>%
-  mutate(GDP_PC_UK = GDP_PC_UK * 0.85)
+  mutate(GDP_PC_UK = GDP_PC_UK * 0.86)
 
 df_gdp_wide <- df_gdp_wide %>%
-  mutate(GDP_PC_NL = GDP_PC_NL * 0.85)
+  mutate(GDP_PC_NL = GDP_PC_NL * 0.86)
 
 df_gdp_wide <- df_gdp_wide %>%
   mutate(GDP_PC_US = GDP_PC_US * 0.85)
@@ -393,15 +392,32 @@ df_long %>%
   ggplot(aes(x = Year, y = Schuld_GDP, color = Land)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "darkred") +
   labs(
     title = "Student Debt as percentage of GDP per capita",
     x = "Year",
     y = "Student Debt / GDP per capita (%)",
-    color = "Land"
+    color = "Country"
   ) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  annotate(
+    "text",
+    x = 2020.7,
+    y = 6.250,
+    label = paste0("Start Covid-19"),
+    color = "black",
+    fontface = "bold",
+    size = 3
+  ) +
+  scale_y_continuous(
+    labels = scales::percent_format(scale = 1),
+      limits = c(0, 150),
+      expand = c(0, 0),
+      breaks = seq(0,150,25)
+    ) +
   scale_x_continuous(breaks = 2014:2023) 
   theme_bw()
 
 ggsave("Event_Analysis.png", width = 8, height = 5) 
+
+
 
