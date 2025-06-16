@@ -27,11 +27,11 @@ df2$'Financial year' <- 2007:2024
 
 #Kolomnamen overal hetzelfde maken voor samenvoegen
 colnames(df1)[1] <- "Year"
-colnames(df1)[2] <- "NL"
+colnames(df1)[2] <- "Studieschuld_NL"
 colnames(df2)[1] <- "Year"
-colnames(df2)[2] <- "UK"
+colnames(df2)[2] <- "Studieschuld_UK"
 colnames(df3)[1] <- "Year"
-colnames(df3)[2] <- "US"
+colnames(df3)[2] <- "Studieschuld_US"
 
 #Year was blijkaar numeriek dus een 'karakter' van maken
 df2$Year <- as.character(df2$Year)
@@ -69,7 +69,17 @@ NL_Mean_Growth = mean(df_sorted$Growth_NL, na.rm = TRUE)
 UK_Mean_Growth = mean(df_sorted$Growth_UK, na.rm = TRUE)
 US_Mean_Growth = mean(df_sorted$Growth_US, na.rm = TRUE)
 
-df_numeric
+
+#Alles in Euros
+
+df_numeric <- df_numeric %>%
+  mutate(US = US * 0.86)
+
+df_numeric <- df_numeric %>%
+  mutate(UK = UK * 1.17)
+
+
+
 
 #Grafiek
 ggplot(df_numeric, aes(x = Year)) +
@@ -125,73 +135,6 @@ ggsave("Temporal_Visualization.png", width = 8, height = 5)
 
 
 
-#Inkomens
-
-library(dplyr)
-library(tidyr)
-library(stringr)
-
-
-file_names <- list.files(path = "C:/Users/Yaide/Downloads/Mean_Income_Data", pattern = "income.*\\.csv", full.names = TRUE)
-
-#Alle bestanden inlezen en jaar toevoegen
-data_list <- lapply(file_names, function(f) {
-
-    year <- str_extract(f, "\\d{4}")
-  
-  df <- read.csv(f, header = FALSE, sep = ";", skip = 2, stringsAsFactors = FALSE)
-  
-
-  names(df) <- c("Country", "Wages")
-  
-
-  df$Year <- as.integer(year)
-  
-
-  df$Wages <- as.numeric(gsub(",", ".", df$Wages))
-  
-  return(df)
-})
-
-#Alles samenvoegen
-combined_df <- bind_rows(data_list)
-
-#Naar wide format
-wide_df <- combined_df %>%
-  pivot_wider(names_from = Country, values_from = Wages) %>%
-  arrange(Year) %>%
-  rename(
-    USA = `United States`,
-    NL = Netherlands,
-    UK = `United Kingdom`
-  )
-
-wide_df
-
-inkomens_per_jaar <- wide_df[ , -2]
-
-samengevoegd <- df_numeric %>%
-  left_join(inkomens_per_jaar, by = "Year"
-
-)
-
-samengevoegd <- samengevoegd %>%
-  rename(
-    studieschuld_nl = NL.x,
-    studieschuld_uk = UK.x,
-    studieschuld_us = US,
-    inkomen_nl = NL.y,
-    inkomen_uk = UK.y,
-    inkomen_us = USA
-  )
-
-View(samengevoegd)
-
-write.csv(samengevoegd, "samengevoegd.csv", row.names = FALSE)
-
-
-
-
 
 # een categorie met over alle landen heen de studieschuld gemiddeld van de 1e helft vanje tijdsperiode
 
@@ -200,7 +143,7 @@ write.csv(samengevoegd, "samengevoegd.csv", row.names = FALSE)
 # een categorie met per land de studieschuld gemiddeld van de 2e helft vanje tijdsperiode
 
 
-data_selected <- data %>%
+data_selected <- df_numeric %>%
   select(Year, starts_with("studieschuld"))
 
 # Data omvormen naar long format
