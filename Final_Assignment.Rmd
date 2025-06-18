@@ -1,27 +1,13 @@
----
-title: "Template"
-author: "Studentnames and studentnumbers here"
-date: "`r Sys.Date()`"
-output: pdf_document
----
+                        #Title Page
 
-# Set-up your environment
+By Mick Bakker, Alex Emmerig, Loek Graven, Yaiden de Jong, Obbe Rozier, Jenno Schmersal
 
-```{r package_install, include=FALSE}
-install.packages("tidyverse")
-```
+Tutorial 2, Group 4
 
-```{r packages}
-require(tidyverse)
-```
+Tutor: Chantal Schouwenaar
 
-# Title Page
 
-Include your names
 
-Include the tutorial group number
-
-Include your tutorial lecturer's name
 
 # Part 1 - Identify a Social Problem
 
@@ -39,7 +25,15 @@ Include the following:
 
 ## 2.1 Load in the data
 
-Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
+Data Netherlands:
+https://www.cbs.nl/nl-nl/nieuws/2024/41/minder-mensen-met-studieschuld
+
+Data UK:
+https://www.gov.uk/government/statistics/student-loans-in-england-2023-to-2024/student-loans-in-england-financial-year-2023-24
+
+Data USA:
+https://educationdata.org/average-student-loan-debt
+
 
 ```{r loading_data}
 dataset <- midwest
