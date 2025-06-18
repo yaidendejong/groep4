@@ -7,6 +7,26 @@ Tutorial 2, Group 4
 Tutor: Chantal Schouwenaar
 
 
+```{r package_install, include=FALSE}
+install.packages("tidyverse")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("scales")
+install.packages("sf") 
+install.packages("rnaturalearth")
+install.packages("rnaturalearthdata")
+install.packages("viridis")
+library(scales)
+library(tidyr)
+library(dplyr)
+library(readxl)
+library(ggplot2)
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+theme_set(theme_bw())
+```
 
 
 # Part 1 - Identify a Social Problem
