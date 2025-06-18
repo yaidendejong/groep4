@@ -34,6 +34,8 @@ https://www.gov.uk/government/statistics/student-loans-in-england-2023-to-2024/s
 Data USA:
 https://educationdata.org/average-student-loan-debt
 
+Data GDP per Capita
+https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2023&locations=NL-GB-US&start=2007
 
 ```{r loading_data}
 dataset <- midwest
