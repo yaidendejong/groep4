@@ -304,6 +304,7 @@ Provide the link to your PUBLIC repository here: ...
 
 Use APA referencing throughout your document.
 
+<<<<<<< HEAD
 
 # ---- PACKAGES ----
 install.packages("tidyverse")
@@ -725,3 +726,5 @@ df_long %>%
   theme_bw()
 
 ggsave("Event_Analysis.png", width = 8, height = 5) 
+=======
+>>>>>>> 488bd3ff3168ba27b3c8ebdfe5378f615c33f948
