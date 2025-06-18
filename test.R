@@ -418,3 +418,32 @@ df_long %>%
   theme_bw()
 
 ggsave("Event_Analysis.png", width = 8, height = 5) 
+
+
+# ---- Extra ----
+# data_EU <- read_excel("Annual-loan-amount-in-EUR,-2023-2024.xls.xlsx", skip = 1)
+# data_EU <- data_EU %>%
+#   mutate(Country = case_when(
+#     Country == "BE-DE" ~ "BE",  # Herstel België
+#     TRUE ~ Country
+#   ))
+# 
+# europe <- ne_countries(scale = "medium", returnclass = "sf") %>%
+#   filter(region_un == "Europe")
+# 
+# europe_loan <- europe %>%
+#   left_join(data_EU, by = c("iso_a2" = "Country"))
+# 
+# ggplot(europe_loan) +
+#   geom_sf(aes(fill = `Maximum amount`)) + 
+#   scale_fill_gradient(
+#     low = "lightblue", 
+#     high = "darkblue", 
+#     na.value = "lightgrey",      
+#     name = "Maximum Loan Amount (€)",
+#     labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")
+#   ) +
+#   coord_sf(xlim = c(-25, 45), ylim = c(34, 72), expand = FALSE) +
+#   theme_bw() +
+#   labs(title = "Annual Loan Amount per Country (2023)",
+#        fill = "Loan Amount (EUR)")
