@@ -30,9 +30,6 @@ theme_set(theme_bw())
 
 
 # Part 1 - Identify a Social Problem
-
-Use APA referencing throughout your document. [Here's a link to some explanation.](https://www.mendeley.com/guides/apa-citation-guide/)
-
 ## 1.1 Describe the Social Problem
 
 Include the following:
@@ -58,7 +55,10 @@ Data GDP per Capita
 https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2023&locations=NL-GB-US&start=2007
 
 ```{r loading_data}
-dataset <- midwest
+#Dataframe maken van excel-bestand
+df1 <- read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
+df2 <- read_excel("England_figure_10.xlsx")
+df3 <- read_excel("Average Total Student Debt USA.xlsx")
 ```
 
 midwest is an example dataset included in the tidyverse package
@@ -66,7 +66,9 @@ midwest is an example dataset included in the tidyverse package
 ## 2.2 Provide a short summary of the dataset(s)
 
 ```{r}
-head(dataset)
+head(df1)
+head(df2)
+head(df3)
 ```
 
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
