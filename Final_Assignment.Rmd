@@ -1,6 +1,6 @@
           Financial vulnerability of young people due to student debt
 
-By Mick Bakker, Alex Emmerig, Loek Graven, Yaiden de Jong, Obbe Rozier, Jenno Schmersal
+By Mick Bakker (2861052), Alex Emmerig (2855406), Loek Graven (2863472), Yaiden de Jong (), Obbe Rozier (2870631), Jenno Schmersal (2853582)
 
 Tutorial 2, Group 4
 
@@ -32,50 +32,110 @@ theme_set(theme_bw())
 # Part 1 - Identify a Social Problem
 ## 1.1 Describe the Social Problem
 
-Include the following:
+Student debt is a big concern in our society. We will compare this problem between the Netherlands, the United Kingdom and the United States of America. Here are a couple of reasons why this is a social problem:
+- Reduced opportunities for mortgages → housing shortage (Jongeren Informatie Punt, n.d.)
+- Increase in stress → reduced mental well-being (Nibud, 2025)
+- Increasing inequality → Widening gap between rich and poor (Vox Magazine, 2021)
 
--   Why is this relevant?
+We will also visualize the ratio of student debts to GDP per capita of the U.S., the UK and the Netherlands. We personally couldn’t find this comparison between the three countries in a source, but this will give a better idea of the severity of the debts compared to each other.
 
--   ...
 
 # Part 2 - Data Sourcing
 
 ## 2.1 Load in the data
 
 Data Netherlands:
-https://www.cbs.nl/nl-nl/nieuws/2024/41/minder-mensen-met-studieschuld
+https://www.cbs.nl/nl-nl/nieuws/2024/41/minder-mensen-met-studieschuld (CBS, 2024)
 
 Data UK:
-https://www.gov.uk/government/statistics/student-loans-in-england-2023-to-2024/student-loans-in-england-financial-year-2023-24
+https://www.gov.uk/government/statistics/student-loans-in-england-2023-to-2024/student-loans-in-england-financial-year-2023-24 (GOV.UK, 2024)
 
 Data USA:
-https://educationdata.org/average-student-loan-debt
+https://educationdata.org/average-student-loan-debt (Education Data Initiative, 2024)
 
 Data GDP per Capita
-https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2023&locations=NL-GB-US&start=2007
+https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2023&locations=NL-GB-US&start=2007 (World Bank Open Data, n.d.)
 
 ```{r loading_data}
-#Dataframe maken van excel-bestand
+# Making dataframes of the excel-files
 df1 <- read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
 df2 <- read_excel("England_figure_10.xlsx")
 df3 <- read_excel("Average Total Student Debt USA.xlsx")
+df4 <- read_excel("gdp_per_capita2.xlsx")
 ```
 
-midwest is an example dataset included in the tidyverse package
 
 ## 2.2 Provide a short summary of the dataset(s)
 
 ```{r}
 head(df1)
-head(df2)
-head(df3)
 ```
 
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
 
-``` r
-inline_code = TRUE
-```
+# Dataset 1:
+  Source: Centraal Bureau voor de Statistiek (CBS). Credible because it is an independent government organization with the duty to provide statistics.
+  Metadata:
+Title: Studieschulden 2011–2024
+Publisher: CBS (Statistics Netherlands)
+Language: Dutch
+Format: Excel (.xlsx)
+Temporal coverage: Annually, from 2011 to 2024
+Variables:
+Year (reference date: January 1)
+Age groups (e.g., 18–24, 25–29, etc.)
+Number of individuals with student debt
+Average student debt per person
+Total student debt in the age group
+Update frequency: Annually
+License: CC BY 4.0 (free to use with attribution)
+Data type: Aggregated, administrative and survey-based
+
+# Dataset 2
+  Source: Student Loans Company (SLC), published on GOV.UK. Credible because  The SLC is a government-owned organization responsible for administering the student loans in the UK, so these are official statistics
+  Metadata:
+Title: Average higher education loan balance on entry into repayment by financial year 2006-07 to 2023-24: England & EU (£)
+Publisher: Student Loans Company (SLC) / GOV.UK
+Language: English
+Format: Excel (.xlsx)
+Temporal coverage: Annually, from 2006-07 - 2023-24
+Variables:
+Financial year
+Average student debt per person at entry into repayment
+Update frequency: Annually
+License: Open Government Licence v3.0 (free to use with attribution)
+Data type: Aggregated, based on administrative data from Student Finance England
+
+# Dataset 3:
+  Source: EducationData.org, maintained by Education Data Initiative. Credible because EducationData.org is a non-profit organization that provides education-related data from credible sources, like the U.S. Department of Education, NCES, and the Federal Reserve.
+  Metadata:
+Title: Average Student Loan Debt in the U.S.
+Publisher: Education Data Initiative
+Language: English
+Format: Excel (.xlsx)
+Temporal coverage: Annually, from 2004 to 2021
+Variables:
+Year
+Average total student loan debt
+Update frequency: Annually
+License: Not clearly stated.
+Data type: Aggregated, compiled from administrative government data
+
+# Dataset 4:
+  Source: The World Bank Open Data. Credible because The World Bank is one of the most trusted organizations for global development data, including GDP per capita.
+  Metadata:
+Title: GDP per capita (current US$) - United Kingdom, United States, Netherlands
+Publisher: The World Bank
+Language: English
+Format: Excel (.xlsx)
+Temporal coverage: Annually, from 2007 to 2023
+Variables:
+Year
+Country (United Kingdom, United States, Netherlands)
+GDP per capita (in current US$)
+Update frequency: Annually
+License: Open data (CC BY 4.0), free to use with attribution.
+Data type: Aggregated, sourced from national accounts and World Bank calculations.
 
 These are things that are usually included in the metadata of the dataset. For your project, you need to provide us with the information from your metadata that we need to understand your dataset of choice.
 
@@ -93,31 +153,29 @@ Think of things like:
 
 ## 3.1 Data cleaning
 
-Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
-
 ```{r data_cleaning}
 # ---- DATA CLEANING EN MERGING ----
 
 
-#Dataframe maken van excel-bestand
+# 1. Importing Excel-files
 df1 <- read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
 df2 <- read_excel("England_figure_10.xlsx")
 df3 <- read_excel("Average Total Student Debt USA.xlsx")
+df4 <- read_excel("gdp_per_capita2.xlsx")
 
 
-
-#Rijen en Kolommen die niet nodig zijn verwijderen
+# 2. Removing unnecessary rows and columns
 df1 <- df1[-c(1, 2, 3), ]
 df1 <- df1[, -c(2, 3, 6)]
 df1 <- df1[, -c(2) ]
 df2 <- df2[, -c(3)]
 
 
-#Veranderen van schooljaar naar kalenderjaar
+# 3. Converting academic year to calendar year of UK data
 df2$'Financial year' <- 2007:2024  
 
 
-#Kolomnamen overal hetzelfde maken voor samenvoegen
+# 4. Renaming columns for merging
 colnames(df1)[1] <- "Year"
 colnames(df1)[2] <- "Studieschuld_NL"
 colnames(df2)[1] <- "Year"
@@ -125,41 +183,71 @@ colnames(df2)[2] <- "Studieschuld_UK"
 colnames(df3)[1] <- "Year"
 colnames(df3)[2] <- "Studieschuld_US"
 
-#Year was blijkaar numeriek dus een 'karakter' van maken
+# 5. Converting 'Year' to a character
 df2$Year <- as.character(df2$Year)
 df3$Year <- as.character(df3$Year)
 
-#Stond een * bij 2023 en 24 bij NL waardoor hij dat als aparte variabele zag
+# 6. Cleaning 'Year' values, remove '*' in Dutch data 
 df1$Year[df1$Year == "2023*"] <- 2023
 df1$Year[df1$Year == "2024*"] <- 2024
 
-# df1,2,3 samenvoegen
+# 7. Merging df1, df2 and df3
 df_merge <- full_join(df1, df2, by = "Year")
 df_merge <- full_join(df_merge, df3, by = "Year")
 
-# Sorteren van Oud naar Nieuw
+# 8. Sorting data by year (asceding)
 df_sorted <- df_merge[order(df_merge$Year, decreasing = FALSE), ]
 
 
-# Alles numeriek maken
+# 9. Converting debt columns to numeric
 df_sorted$Studieschuld_NL <- as.numeric(df_sorted$Studieschuld_NL)
 df_sorted$Studieschuld_UK <- as.numeric(df_sorted$Studieschuld_UK)
 df_sorted$Studieschuld_US <- as.numeric(df_sorted$Studieschuld_US)
+
+# 10. Read and clean GDP per capita data
+gdp_per_capita_data <- read_xlsx("gdp_per_capita2.xlsx")
+
+
+jaar_kolommen <- as.character(unlist(gdp_per_capita_data[3, ]))
+
+jaar_kolommen[is.na(jaar_kolommen)] <- paste0("V", which(is.na(jaar_kolommen)))
+df_gdp <- gdp_per_capita_data[4:6, ]
+colnames(df_gdp) <- jaar_kolommen
+df_gdp <- df_gdp %>%
+  select(`Country Name`, `2007`:`2023`)
+
+df_gdp_long <- df_gdp %>%
+  pivot_longer(
+    cols = -`Country Name`,
+    names_to = "Year",
+    values_to = "GDP_PC"
+  )
+
+df_gdp_long$GDP_PC <- as.numeric(df_gdp_long$GDP_PC)
+df_gdp_long$Year <- as.integer(df_gdp_long$Year)
+
 ```
 
-Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
 
 ## 3.2 Generate necessary variables
 
-Variable 1
+# Variable 1
 
 ```{r gen_var1}
 df_sorted$Growth_NL <- c(NA, diff(df_sorted$Studieschuld_NL) / head(df_sorted$Studieschuld_NL, -1) * 100)
 df_sorted$Growth_UK <- c(NA, diff(df_sorted$Studieschuld_UK) / head(df_sorted$Studieschuld_UK, -1) * 100)
 df_sorted$Growth_US <- c(NA, diff(df_sorted$Studieschuld_US) / head(df_sorted$Studieschuld_US, -1) * 100)
-```
 
-Variable 2
+```
+Explain which variables you used/combined to create your new variable:
+  -We used the student debts and the years to create the year-to-year growth of the studet debt per country.
+Why is the creation of this variable informative and useful for your analyses & your topic:
+  - This new variable gives us the information about how the student debts have been changing over time compared to the economy around it.
+What do you intent to analyse/visualize using this variable: 
+  - We intend to visualize how economic disruptions like COVID-19 and Brexit influence the student debts. With this new variable we can analyze how these economic disruptions influence the student debt.
+  
+  
+# Variable 2
 
 ```{r gen_var2}
 df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
@@ -170,13 +258,21 @@ df_merged <- df_merged %>%
     Schuld_GDP_UK = 100 * Studieschuld_UK / GDP_PC_UK,
     Schuld_GDP_US = 100 * Studieschuld_US / GDP_PC_US
   )
+
 ```
+Explain which variables you used/combined to create your new variable:
+  -We used student debt and the GDP per capita to create a ratio of student debt as a percentage of GDP per capita.
+Why is the creation of this variable informative and useful for your analyses & your topic:
+  - This variables helps us to understand how big the debt is in the three countries, relative to the GDP per capita. This tells us how much of a burden the debt puts on students and if they will be capable to repay the debts.
+What do you intent to analyse/visualize using this variable: 
+  - We intend to visualize how the student debt in the UK, US and the Netherlands compare to the GDP per capita, visualizing if they will be capable to repay the debts
+  
 
 ## 3.3 Visualize temporal variation
 
 ```{r}
 
-#Procentuele groei per jaar
+#Procentual growth per year
 df_growth_long <- df_numeric %>%
   select(Year, Growth_NL, Growth_UK, Growth_US) %>%
   pivot_longer(
@@ -204,11 +300,14 @@ df_growth_long %>%
 
 ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
 ```
-
+Short description of how this visualization aligns with your topic:
+  - This graph aligns with our problem because it visualizes the percentage growth of student debt in the Netherlands, the UK, and the US. It shows that the UK has had the largest growth in student debt since 2016, followed by the Netherlands, while the US has experienced the lowest growth. The increase in student debt in the UK is likely due to Brexit, while in the Netherlands it may be attributed to a change in the student finance system, which did not work as intended. In recent years, under the new system, the growth has slowed down. Meanwhile, the growth of student debt in the US has remained relatively consistent.
+  
+  
 ## 3.4 Visualize spatial variation
 
 ```{r visualise_map}
-#Gemiddelden 
+#means
 gemiddelde <- data_selected %>% 
   summarise(
     Studieschuld_NL = mean(Studieschuld_NL, na.rm=TRUE),
@@ -225,7 +324,7 @@ gemiddelde <- data_selected %>%
   )
 
 
-# Wereldkaart
+# Worldmap
 wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
 
 
@@ -238,14 +337,14 @@ ggplot(wereldkaart_met_data) +
   scale_fill_gradient(
     low = "lightblue", 
     high = "darkblue", 
-    na.value = "lightgrey",      # <- grijs voor landen zonder data
+    na.value = "lightgrey",      # <- Grey for countries without data
     name = "Mean Student Debt (€)",
     labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")
   ) +
   coord_sf(
     crs = 3857,
-    xlim = c(-1.35e7, 0.4e6),   # links (VS) tot rechts (NL)
-    ylim = c(2.2e6, 8e6)       # onder (VS zuid) tot boven (UK noord)
+    xlim = c(-1.35e7, 0.4e6),   # Left (US) to right (NL)
+    ylim = c(2.2e6, 8e6)       # Down (South US) to up (North UK)
   ) +
 
   labs(title = "Mean Student Debt (2007–2024)") +  
@@ -255,30 +354,55 @@ ggplot(wereldkaart_met_data) +
 
 ggsave("Spatial_Visualization.png", width = 8, height = 5) 
 ```
+Short description of how this visualization aligns with your topic:
+  - This map aligns with our topic because this visualises that the United States have the highest average debt, and the Netherlands the lowest average debt. This visualises that not all student loan systems have an equal financial risk, and the place where you study has a big impact on the height of the debts. This shows where students are most vulnerable for debts.
 
-Here you provide a description of why the plot above is relevant to your specific social problem.
 
 ## 3.5 Visualize sub-population variation
 
-What is the poverty rate by state?
-
 ```{r visualise_subpopulations}
-dataset$inmetro <- dataset$inmetro %>% as.factor()
-# Boxplot of poverty rate by state using the 'midwest' dataset
-ggplot(dataset, aes(x = inmetro, y = percadultpoverty)) +
-  geom_boxplot() +
-  labs(
-    title = "Distribution of Poverty Rates by Metropolitan status (Midwest counties)",
-    x = "Metropolitan Area",
-    y = "Poverty Rate of Adults (%)"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "right"
-  )
-```
+data_selected <- df_numeric %>%
+  select(Year, starts_with("Studieschuld"))
 
-Here you provide a description of why the plot above is relevant to your specific social problem.
+# Converting data to long format
+data_long <- data_selected %>%
+  pivot_longer(
+    cols = -Year,
+    names_to = c("variabele", "land"),
+    names_pattern = "(Studieschuld)_(.*)"
+  ) %>%
+  rename(studieschuld = value)
+
+# Label time period
+data_long <- data_long %>%
+  mutate(
+    period = case_when(
+      Year <= 2019 ~ "2014 - 2019",  
+      Year > 2019 ~ "2020 - 2024"
+    )
+  )
+
+
+# Calculate mean per country per period
+data_avg <- data_long %>%
+  group_by(land, period) %>%
+  summarise(studieschuld_mean = mean(studieschuld, na.rm = TRUE), .groups = "drop")
+
+# Create boxplot
+ggplot(data_avg, aes(x = period, y = studieschuld_mean)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  labs(title = "Mean Student Debt per Period (All Countries)",
+       x = "Period",
+       y = "Mean Student Debt") +
+  scale_y_continuous(labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")) +
+  theme_bw()
+
+ggsave("Sub_Population.png", width = 8, height = 5) 
+
+```
+Short description of how this visualization aligns with your topic:
+ - This boxplot shows that the average student debt in all countries clearly went up between 2020 and 2024, compared to 2014 to 2019. The median is higher, and the total range of debt is also bigger. This means that student debt has become a bigger problem for young people, especially during and after the COVID-19 period. Because of this, it has become harder for many to get a mortgage, which makes the housing shortage worse. The higher debt also causes more stress and worry, which affects young people’s mental health. On top of that, it increases the gap between rich and poor, because students from richer families are less affected.
+
 
 ## 3.6 Event analysis
 
@@ -286,23 +410,128 @@ Analyze the relationship between two variables.
 
 ```{r analysis}
 
+# Convert to long format
+df_gdp_wide <- df_gdp_long %>%
+  pivot_wider(
+    names_from = `Country Name`,
+    values_from = GDP_PC
+  ) %>%
+  rename(
+    GDP_PC_UK = `United Kingdom`,
+    GDP_PC_NL = Netherlands,
+    GDP_PC_US = `United States`
+  ) %>%
+  arrange(Year)
+
+
+
+# Convert Dollars to Euro's
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(GDP_PC_UK = GDP_PC_UK * 0.86)
+
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(GDP_PC_NL = GDP_PC_NL * 0.86)
+
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(GDP_PC_US = GDP_PC_US * 0.85)
+
+
+
+# Merge with all other data and make new variable
+df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
+
+df_merged <- df_merged %>%
+  mutate(
+    Schuld_GDP_NL = 100 * Studieschuld_NL / GDP_PC_NL,
+    Schuld_GDP_UK = 100 * Studieschuld_UK / GDP_PC_UK,
+    Schuld_GDP_US = 100 * Studieschuld_US / GDP_PC_US
+  )
+
+
+# Create plot
+df_long <- df_merged %>%
+  select(Year, Schuld_GDP_NL, Schuld_GDP_UK, Schuld_GDP_US) %>%
+  pivot_longer(
+    cols = starts_with("Schuld_GDP"),
+    names_to = "Land",
+    values_to = "Schuld_GDP"
+  ) %>%
+  mutate(
+    Land = case_when(
+      Land == "Schuld_GDP_NL" ~ "NL",
+      Land == "Schuld_GDP_UK" ~ "UK",
+      Land == "Schuld_GDP_US" ~ "US"
+    )
+  )
+
+df_long %>%
+  filter(Year >= 2015, Year <= 2023) %>%
+  ggplot(aes(x = Year, y = Schuld_GDP, color = Land)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "darkred") +
+  labs(
+    title = "Student Debt as percentage of GDP per capita",
+    x = "Year",
+    y = "Student Debt / GDP per capita (%)",
+    color = "Country"
+  ) +
+  annotate(
+    "text",
+    x = 2020.7,
+    y = 6.250,
+    label = paste0("Start Covid-19"),
+    color = "black",
+    fontface = "bold",
+    size = 3
+  ) +
+  scale_y_continuous(
+    labels = scales::percent_format(scale = 1),
+      limits = c(0, 150),
+      expand = c(0, 0),
+      breaks = seq(0,150,25)
+    ) +
+  scale_x_continuous(breaks = 2014:2023) 
+  theme_bw()
+
+ggsave("Event_Analysis.png", width = 8, height = 5) 
+
 ```
 
-Here you provide a description of why the plot above is relevant to your specific social problem.
+What does this visualization mean for your topic:
+ - The graph shows that student debt has grown the most in the UK, likely due to Brexit, followed by the Netherlands after a failed change in the student finance system. Growth has slowed in the Netherlands in recent years, while the US shows steady but lower growth. This rising debt increases financial vulnerability for young people, making it harder to get mortgages, increasing stress levels, and widening the gap between rich and poor.
+
 
 # Part 4 - Discussion
 
 ## 4.1 Discuss your findings
+Our findings from this research are pretty clear if we look at the plots. Looking at our spatial visualisation, the US students got by far the most debt, around 45,000$ dollar. After that we got the UK, and at last the Dutch students. With the temporal visualisation we see big fluctuations for the UK procentual growth of student debt (since 2014). This can be explained through different factors that influence the debt of students such as tuition fee hikes, inflation-linked interest, COVID-19 disruptions and Brexit’s impact on students. The US is going pretty steady in the growth of student debt. Only the Netherlands has a bit of a fluctuation in 2019, this can easily be explained. The sharp increase in student debt in the Netherlands around 2019 is mainly due to the full implementation of the loan system (leenstelsel), replacing grants with loans, leading students to borrow significantly more.
+
+Our sub-population is divided in two periods, from 2014 till 2019 and from 2020 till 2024. If we look at the plot clearly we see that the students from 2020 till 2024 have much more debt than the other period. This is mainly because of COVID-19 and the rising inflation in the Netherlands.
+
+Lastly we got our event analysis with two plots. Looking at the first plot we see the growth in student debt per country. Where the Netherlands are growing a little bit each year, on the contrary we have the US and UK who are growing much more with each year. Student debt keeps growing faster in the US and UK because students have to borrow a lot — mainly due to high tuition and living costs. On top of that, interest adds up quickly, and many students don’t start paying it back right away or only pay small amounts based on their income. So over time, the total debt just keeps getting bigger.
+
+The second plot visualizes the student debt as a percentage of GDP per capita. Where the Netherlands is the lowest, the US second, and the UK first with 125%. The UK tops the chart because students borrow a lot, interest keeps adding up, and average income isn’t high enough to balance it out. The US is similar, but has a slightly higher GDP per capita. The Netherlands has lower tuition and better economic balance, so its student debt looks much smaller compared to income.
+
+While our visualizations and variables provide strong insights, there are some limitations to our data. For example, we worked with aggregated data, which means we couldn’t work with more personal data, such as gender, income level or education type. Also, the data from different countries were sometimes based on slightly different definitions. For example, in the UK, the reported student debt figures only include students who have already started repaying their loans, excluding the students who are still studying or not yet required to repay. This makes direct comparisons more difficult. Finally, the GDP figures we used are expressed in nominal euros, dollars and ponds, they have not been adjusted for inflation, which reduces the accuracy of comparisons across different years and countries.
+Based on what we found, we think that governments should look more closely at how student debt relates to what students can earn later in life. This is important when they make or change loan systems, because it shows how much stress the debt can cause for young people. We also saw that students from low-income families are often affected the most, so they need extra help. In the future, it would be helpful to use more detailed information about people, like their family situation and income. This can help us understand better how student debt leads to unfair differences and who needs support the most.
+
 
 # Part 5 - Reproducibility
 
 ## 5.1 Github repository link
 
-Provide the link to your PUBLIC repository here: ...
+Provide the link to your PUBLIC repository here: https://github.com/yaidendejong/ProgrammingForEcon
 
 ## 5.2 Reference list
+Een torenhoge studieschuld bij DUO: wat zijn nou écht de gevolgen? | Jongeren  Informatie Punt. (n.d.). https://www.jiphaarlemmermeer.nl/een-torenhoge-studieschuld-bij-duo-wat-zijn-nou-%C3%A9cht-de-gevolgen
+Groen, A., Van den Enden, G., & Veerman, N. (2025). Nibud Studentenonderzoek 2024: Onderzoek naar de geldzaken van mbo-, hbo en wo-studenten. In Nibud. https://www.tweedekamer.nl/downloads/document?id=2024D32954
+Noij, M. (2021, July 14). Studenten na evaluatie leenstelsel: ‘Het vergroot de ongelijkheid in de samenleving’ Vox Magazine. https://www.voxweb.nl/nieuws/studenten-na-evaluatie-leenstelsel-het-vergroot-de-ongelijkheid-in-de-samenleving
+Centraal Bureau voor de Statistiek. (2024, October 9). Minder mensen met studieschuld. Centraal Bureau Voor De Statistiek. https://www.cbs.nl/nl-nl/nieuws/2024/41/minder-mensen-met-studieschuld
+Student loans in England: financial year 2023-24. (2024, June 20). GOV.UK. https://www.gov.uk/government/statistics/student-loans-in-england-2023-to-2024/student-loans-in-england-financial-year-2023-24
+Hanson, M. (2024, August 16). Average Student Loan Debt [2024]: by Year, Age & More. Education Data Initiative. https://educationdata.org/average-student-loan-debt
+World Bank Open Data. (n.d.). World Bank Open Data. https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2023&locations=NL-GB-US&start=2007
 
-Use APA referencing throughout your document.
 
 
 
