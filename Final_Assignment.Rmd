@@ -32,10 +32,10 @@ theme_set(theme_bw())
 # Part 1 - Identify a Social Problem
 ## 1.1 Describe the Social Problem
 
-Student debt is a big concern in our society. We will compare this problem between the Netherlands, the United Kingdom and the United States of America. Here are a couple of reasons why this is a social problem:
-- Reduced opportunities for mortgages → housing shortage (Jongeren Informatie Punt, n.d.)
-- Increase in stress → reduced mental well-being (Nibud, 2025)
-- Increasing inequality → Widening gap between rich and poor (Vox Magazine, 2021)
+Student debt is becoming a serious social problem, especially for young people who are just starting their adult lives. According to Jongeren Informatie Punt (n.d.), a high student debt can significantly reduce the chances of getting a mortgage. This makes it harder for young people to buy a house, which contributes to the broader housing shortage. As housing becomes less accessible, students are often forced to rent longer, live with their parents, or move to less desirable areas. This has long-term effects on their independence, stability, and ability to build up wealth.
+Moreover, research from Vox Magazine (Noij, 2021) shows that the current loan system increases inequality in society. Students from lower-income families are more likely to accumulate high debts, while students with wealthier parents can avoid borrowing altogether. This deepens the divide between social groups, as those with debt may postpone major life decisions like buying a home, starting a business, or even having children.
+The Nibud Studentenonderzoek 2024 (Groen et al., 2025) also highlights the psychological burden of debt. Many students report experiencing stress, anxiety, and financial insecurity, which can negatively affect their academic performance and mental health. Together, these findings show that student debt is not just a financial issue but also a far-reaching social and it has emotional consequences that affect young people’s wellbeing and future prospects.
+
 
 We will also visualize the ratio of student debts to GDP per capita of the U.S., the UK and the Netherlands. We personally couldn’t find this comparison between the three countries in a source, but this will give a better idea of the severity of the debts compared to each other.
 
@@ -227,6 +227,15 @@ df_gdp_long$GDP_PC <- as.numeric(df_gdp_long$GDP_PC)
 df_gdp_long$Year <- as.integer(df_gdp_long$Year)
 
 ```
+
+Explain why you merged the datasets in the way you did:
+We merged the data from the student debts in the UK, US and the Netherlands together because all the data came from single datasets. In all the datasets, “years” was the variable being in all of them, so we used this variable to combine all 3 of  the datasets together. In the GDP per capita dataset we already have all the data from the US, UK and the Netherlands in one dataframe, so we merged this one to the student debt one by year as well.
+Why was this merge option the best choice:
+This merge option gives us a way to produce a detailed temporal view of the student debt and the GDP and seemed the only logical one with these datasets.
+Suggest a way in which this could have been done better in an ideal world:
+In an ideal world we would have found a dataset with all student debts per year for a lot more countries. In reality we found that surprisingly this is not very well documented for a lot of countries. Also it was hard to find reliable datasets from the same source for the 3 different countries that included the same years. This is why in our dataset the student debt of the UK starts in 2007, NL in 2011, and US in 2014. For clearancy we used 2014 as the starting point for our analyses.
+Discuss searches for errors and document any found + how you fixed them:
+About halfway through the analyses, when we wanted to make the axes have a clear variable, we noticed that the student debts were all in different currencies (e.g. UK was pounds, US was dollars and NL was euros). So, we had to correct all these numbers to make it one currency (we chose euros). The GDP dataset was in dollars for all countries, so we converted all of them to euros. We did however choose the current conversion rate, and not the historical conversion rate per year, as this would make this assignment a bit too extensive. This could be something we could work on in future research.
 
 
 ## 3.2 Generate necessary variables
