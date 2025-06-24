@@ -41,7 +41,6 @@ We will also visualize the ratio of student debts to GDP per capita of the U.S.,
 
 
 # Part 2 - Data Sourcing
-
 ## 2.1 Load in the data
 
 Data Netherlands:
@@ -73,7 +72,7 @@ head(df1)
 
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
 
-# Dataset 1:
+## Dataset 1:
   Source: Centraal Bureau voor de Statistiek (CBS). Credible because it is an independent government organization with the duty to provide statistics.
   Metadata:
 Title: Studieschulden 2011–2024
@@ -91,7 +90,7 @@ Update frequency: Annually
 License: CC BY 4.0 (free to use with attribution)
 Data type: Aggregated, administrative and survey-based
 
-# Dataset 2
+## Dataset 2
   Source: Student Loans Company (SLC), published on GOV.UK. Credible because  The SLC is a government-owned organization responsible for administering the student loans in the UK, so these are official statistics
   Metadata:
 Title: Average higher education loan balance on entry into repayment by financial year 2006-07 to 2023-24: England & EU (£)
@@ -106,7 +105,7 @@ Update frequency: Annually
 License: Open Government Licence v3.0 (free to use with attribution)
 Data type: Aggregated, based on administrative data from Student Finance England
 
-# Dataset 3:
+## Dataset 3:
   Source: EducationData.org, maintained by Education Data Initiative. Credible because EducationData.org is a non-profit organization that provides education-related data from credible sources, like the U.S. Department of Education, NCES, and the Federal Reserve.
   Metadata:
 Title: Average Student Loan Debt in the U.S.
@@ -121,7 +120,7 @@ Update frequency: Annually
 License: Not clearly stated.
 Data type: Aggregated, compiled from administrative government data
 
-# Dataset 4:
+## Dataset 4:
   Source: The World Bank Open Data. Credible because The World Bank is one of the most trusted organizations for global development data, including GDP per capita.
   Metadata:
 Title: GDP per capita (current US$) - United Kingdom, United States, Netherlands
@@ -141,13 +140,7 @@ These are things that are usually included in the metadata of the dataset. For y
 
 ## 2.3 Describe the type of variables included
 
-Think of things like:
-
--   Do the variables contain health information or SES information?
-
--   Have they been measured by interviewing individuals or is the data coming from administrative sources?
-
-*For the sake of this example, I will continue with the assignment...*
+The first 3 datasets are primarily administrative data that is kept by the respective (semi-)governments agencies. The GDP is calculated by national accounts data and population estimates. 
 
 # Part 3 - Quantifying
 
@@ -240,7 +233,7 @@ About halfway through the analyses, when we wanted to make the axes have a clear
 
 ## 3.2 Generate necessary variables
 
-# Variable 1
+## Variable 1
 
 ```{r gen_var1}
 df_sorted$Growth_NL <- c(NA, diff(df_sorted$Studieschuld_NL) / head(df_sorted$Studieschuld_NL, -1) * 100)
@@ -250,13 +243,14 @@ df_sorted$Growth_US <- c(NA, diff(df_sorted$Studieschuld_US) / head(df_sorted$St
 ```
 Explain which variables you used/combined to create your new variable:
   -We used the student debts and the years to create the year-to-year growth of the studet debt per country.
+  
 Why is the creation of this variable informative and useful for your analyses & your topic:
   - This new variable gives us the information about how the student debts have been changing over time compared to the economy around it.
 What do you intent to analyse/visualize using this variable: 
-  - We intend to visualize how economic disruptions like COVID-19 and Brexit influence the student debts. With this new variable we can analyze how these economic disruptions influence the student debt.
+  - We intend to visualize how economic disruptions like COVID-19 influence the student debts. With this new variable we can analyze how these economic disruptions influence the student debt.
   
   
-# Variable 2
+## Variable 2
 
 ```{r gen_var2}
 df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
@@ -270,11 +264,14 @@ df_merged <- df_merged %>%
 
 ```
 Explain which variables you used/combined to create your new variable:
-  -We used student debt and the GDP per capita to create a ratio of student debt as a percentage of GDP per capita.
+  -We used student debt and the GDP per capita ratio to create a visualisation of student debt as a percentage of GDP per capita. We also used the year-on-year procentual growth of student debt to create a visualisation for the growth in student debt per country. We used both these plots for our event analysis.
+
 Why is the creation of this variable informative and useful for your analyses & your topic:
-  - This variables helps us to understand how big the debt is in the three countries, relative to the GDP per capita. This tells us how much of a burden the debt puts on students and if they will be capable to repay the debts.
-What do you intent to analyse/visualize using this variable: 
-  - We intend to visualize how the student debt in the UK, US and the Netherlands compare to the GDP per capita, visualizing if they will be capable to repay the debts
+  - Our topic is about how student debt affects students, and these variables help us understand how big the debt is, how much of a burden it puts on students, and how it’s been changing over time compared to the economy around them.
+
+What do you intent to analyse/visualize using this variable:
+  - We intend to visualize how economic disruptions like COVID-19 influence our plots. With our new variables we can analyze how these economic disruptions influence the student debt and the GDP per capita. COVID-19 caused for example major job losses all over the world and Brexit caused economic uncertainty in the UK. Both have an effect on our variables.
+
   
 
 ## 3.3 Visualize temporal variation
@@ -413,6 +410,7 @@ Short description of how this visualization aligns with your topic:
  - This boxplot shows that the average student debt in all countries clearly went up between 2020 and 2024, compared to 2014 to 2019. The median is higher, and the total range of debt is also bigger. This means that student debt has become a bigger problem for young people, especially during and after the COVID-19 period. Because of this, it has become harder for many to get a mortgage, which makes the housing shortage worse. The higher debt also causes more stress and worry, which affects young people’s mental health. On top of that, it increases the gap between rich and poor, because students from richer families are less affected.
 
 
+
 ## 3.6 Event analysis
 
 Analyze the relationship between two variables.
@@ -508,29 +506,28 @@ ggsave("Event_Analysis.png", width = 8, height = 5)
 ```
 
 What does this visualization mean for your topic:
- - The graph shows that student debt has grown the most in the UK, likely due to Brexit, followed by the Netherlands after a failed change in the student finance system. Growth has slowed in the Netherlands in recent years, while the US shows steady but lower growth. This rising debt increases financial vulnerability for young people, making it harder to get mortgages, increasing stress levels, and widening the gap between rich and poor.
+ - This visualization shows how student debt changed in the Netherlands, the UK, and the US when COVID-19 started in 2020. In the UK, student debt rose quickly after the pandemic, but it became a smaller percentage of GDP per capita, however students still owed more compared to the average income in the country. In the US, student debt continued to grow steadily, but the change during COVID-19 was smaller. In the Netherlands the increase was slower, but debt still went up slightly after 2020. This shows that COVID-19 had a different impact on student debt in each country, depending on how their systems responded.
+
 
 
 # Part 4 - Discussion
 
 ## 4.1 Discuss your findings
-Our findings from this research are pretty clear if we look at the plots. Looking at our spatial visualisation, the US students got by far the most debt, around 45,000$ dollar. After that we got the UK, and at last the Dutch students. With the temporal visualisation we see big fluctuations for the UK procentual growth of student debt (since 2014). This can be explained through different factors that influence the debt of students such as tuition fee hikes, inflation-linked interest, COVID-19 disruptions and Brexit’s impact on students. The US is going pretty steady in the growth of student debt. Only the Netherlands has a bit of a fluctuation in 2019, this can easily be explained. The sharp increase in student debt in the Netherlands around 2019 is mainly due to the full implementation of the loan system (leenstelsel), replacing grants with loans, leading students to borrow significantly more.
+Our findings from this research are pretty clear if we look at the plots. Looking at our spatial visualisation, the students in the US have the most student debt, around 45.000 dollars, followed by the UK and the Dutch students. In the temporal visualisation we see big fluctuations for the UK procentual growth of student debt (since 2014). This can be explained through different factors that influence the debt of students such as tuition fee hikes, inflation-linked interest, COVID-19 disruptions and mostly Brexit’s impact. The US student debt is steadily growing since 2014. The Netherlands has a bit of a fluctuation in 2019, that can be explained by the full implementation of the loan system (‘leenstelsel ’), replacing grants with loans, leading students to borrow significantly more.
 
-Our sub-population is divided in two periods, from 2014 till 2019 and from 2020 till 2024. If we look at the plot clearly we see that the students from 2020 till 2024 have much more debt than the other period. This is mainly because of COVID-19 and the rising inflation in the Netherlands.
+Our sub-population is divided in two periods, from 2014 till 2019 and from 2020 till 2024. If we look at the plot clearly we see that the students from 2020 till 2024 have more debt than the other period. This could be caused by COVID-19 and the rising inflation.
+Lastly, we looked at our event analysis using two plots that show how student debt changed over time and compared to income. The first plot shows that student debt kept growing in all countries, but especially in the UK and the US. In the Netherlands, the increase was slower, but debt still went up each year. After COVID-19 started in 2020, debt in the UK rose even faster, likely because students had fewer job options and needed to borrow more.
+The second plot shows student debt as a percentage of GDP per capita, which means how big the debt is compared to the average income. Since 2017, the UK has had the highest percentage, and it actually became less after COVID-19. The US stayed in second place, and the Netherlands remained the lowest. This shows that student debt became a bigger problem in countries where costs were already high, and COVID-19 made it even harder for students to manage their finances.
+While our visualizations and variables provide strong insights, there are some limitations to our data. For example, we worked with aggregated data, which means we couldn’t work with more personal data, such as gender, income level or education type. Also, the data from different countries were sometimes based on slightly different definitions. For example, in the UK, the reported student debt figures only include students who have already started repaying their loans, excluding the students who are still studying or not yet required to repay. This makes direct comparisons more difficult. Finally, the GDP figures we used are expressed in current dollars, they have not been adjusted for inflation, which reduces the accuracy of comparisons across different years and countries. In future research, we should adjust all of our numbers of GDP per capita and student debt for inflation and historical currency conversions. This could give a very different but above all a more accurate description of our problem
+Based on what we found, we think that governments should look more closely at how student debt relates to what students can earn later in life. This is important when they make or change loan systems, because it shows how much stress the debt can cause for young people. In the future, it would be helpful to use more detailed information about people, like their family situation and income. This can help us understand better how student debt leads to unfair differences and who needs support the most.
 
-Lastly we got our event analysis with two plots. Looking at the first plot we see the growth in student debt per country. Where the Netherlands are growing a little bit each year, on the contrary we have the US and UK who are growing much more with each year. Student debt keeps growing faster in the US and UK because students have to borrow a lot — mainly due to high tuition and living costs. On top of that, interest adds up quickly, and many students don’t start paying it back right away or only pay small amounts based on their income. So over time, the total debt just keeps getting bigger.
-
-The second plot visualizes the student debt as a percentage of GDP per capita. Where the Netherlands is the lowest, the US second, and the UK first with 125%. The UK tops the chart because students borrow a lot, interest keeps adding up, and average income isn’t high enough to balance it out. The US is similar, but has a slightly higher GDP per capita. The Netherlands has lower tuition and better economic balance, so its student debt looks much smaller compared to income.
-
-While our visualizations and variables provide strong insights, there are some limitations to our data. For example, we worked with aggregated data, which means we couldn’t work with more personal data, such as gender, income level or education type. Also, the data from different countries were sometimes based on slightly different definitions. For example, in the UK, the reported student debt figures only include students who have already started repaying their loans, excluding the students who are still studying or not yet required to repay. This makes direct comparisons more difficult. Finally, the GDP figures we used are expressed in nominal euros, dollars and ponds, they have not been adjusted for inflation, which reduces the accuracy of comparisons across different years and countries.
-Based on what we found, we think that governments should look more closely at how student debt relates to what students can earn later in life. This is important when they make or change loan systems, because it shows how much stress the debt can cause for young people. We also saw that students from low-income families are often affected the most, so they need extra help. In the future, it would be helpful to use more detailed information about people, like their family situation and income. This can help us understand better how student debt leads to unfair differences and who needs support the most.
 
 
 # Part 5 - Reproducibility
 
 ## 5.1 Github repository link
 
-Provide the link to your PUBLIC repository here: https://github.com/yaidendejong/ProgrammingForEcon
+Provide the link to your PUBLIC repository here: https://github.com/yaidendejong/groep4
 
 ## 5.2 Reference list
 Een torenhoge studieschuld bij DUO: wat zijn nou écht de gevolgen? | Jongeren  Informatie Punt. (n.d.). https://www.jiphaarlemmermeer.nl/een-torenhoge-studieschuld-bij-duo-wat-zijn-nou-%C3%A9cht-de-gevolgen
