@@ -60,22 +60,22 @@ https://educationdata.org/average-student-loan-debt (Education Data Initiative, 
 Data GDP per Capita
 https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?end=2023&locations=NL-GB-US&start=2007 (World Bank Open Data, n.d.)
 
-```{r loading_data}
+```{r loading_data, message=FALSE}
 # Making dataframes of the excel-files
-df1 <- read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
-df2 <- read_excel("England_figure_10.xlsx")
-df3 <- read_excel("Average Total Student Debt USA.xlsx")
-df4 <- read_excel("gdp_per_capita2.xlsx")
+df1 = read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
+df2 = read_excel("England_figure_10.xlsx")
+df3 = read_excel("Average Total Student Debt USA.xlsx")
+df4 = read_excel("gdp_per_capita2.xlsx")
 ```
 
 
 ## 2.2 Provide a short summary of the dataset(s)
 
-```{r}
+```{r, message=FALSE}
 head(df1)
 ```
 
-In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
+In this case we see 6 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured yet.
 
 ## Dataset 1:
   Source: Centraal Bureau voor de Statistiek (CBS). Credible because it is an independent government organization with the duty to provide statistics.
@@ -151,22 +151,22 @@ The first 3 datasets are primarily administrative data that is kept by the respe
 
 ## 3.1 Data cleaning
 
-```{r data_cleaning}
+```{r data_cleaning, message=FALSE}
 # ---- DATA CLEANING EN MERGING ----
 
 
 # 1. Importing Excel-files
-df1 <- read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
-df2 <- read_excel("England_figure_10.xlsx")
-df3 <- read_excel("Average Total Student Debt USA.xlsx")
-df4 <- read_excel("gdp_per_capita2.xlsx")
+df1 = read_excel("Studieschuld_2011-2024(goeie).xlsx", skip = 1)
+df2 = read_excel("England_figure_10.xlsx")
+df3 = read_excel("Average Total Student Debt USA.xlsx")
+df4 = read_excel("gdp_per_capita2.xlsx")
 
 
 # 2. Removing unnecessary rows and columns
-df1 <- df1[-c(1, 2, 3), ]
-df1 <- df1[, -c(2, 3, 6)]
-df1 <- df1[, -c(2) ]
-df2 <- df2[, -c(3)]
+df1 = df1[-c(1, 2, 3), ]
+df1 = df1[, -c(2, 3, 6)]
+df1 = df1[, -c(2) ]
+df2 = df2[, -c(3)]
 
 
 # 3. Converting academic year to calendar year of UK data
@@ -193,7 +193,7 @@ df1$Year[df1$Year == "2024*"] <- 2024
 df_merge <- full_join(df1, df2, by = "Year")
 df_merge <- full_join(df_merge, df3, by = "Year")
 
-# 8. Sorting data by year (asceding)
+# 8. Sorting data by year (ascending)
 df_sorted <- df_merge[order(df_merge$Year, decreasing = FALSE), ]
 
 
@@ -202,8 +202,25 @@ df_sorted$Studieschuld_NL <- as.numeric(df_sorted$Studieschuld_NL)
 df_sorted$Studieschuld_UK <- as.numeric(df_sorted$Studieschuld_UK)
 df_sorted$Studieschuld_US <- as.numeric(df_sorted$Studieschuld_US)
 
+# (making variable, also noted in 3.2 but code wouldnt work if i didnt place it here)
+df_sorted$Growth_NL <- c(NA, diff(df_sorted$Studieschuld_NL) / head(df_sorted$Studieschuld_NL, -1) * 100)
+df_sorted$Growth_UK <- c(NA, diff(df_sorted$Studieschuld_UK) / head(df_sorted$Studieschuld_UK, -1) * 100)
+df_sorted$Growth_US <- c(NA, diff(df_sorted$Studieschuld_US) / head(df_sorted$Studieschuld_US, -1) * 100)
 
-# 10. Read and clean GDP per capita data
+
+df_sorted <- df_sorted %>%
+  mutate(across(c(Studieschuld_NL, Studieschuld_UK, Studieschuld_US, Growth_NL, Growth_UK, Growth_US), ~as.numeric(.)),
+         Year = as.numeric(Year))
+
+
+# 10. converting valuta to euro
+df_sorted <- df_sorted %>%
+  mutate(
+    Studieschuld_US = Studieschuld_US * 0.86,
+    Studieschuld_UK = Studieschuld_UK * 1.17
+  )
+
+# 11. Read and clean GDP per capita data
 gdp_per_capita_data <- read_xlsx("gdp_per_capita2.xlsx")
 
 
@@ -262,18 +279,56 @@ What do you intent to analyse/visualize using this variable:
 ## Variable 2
 
 ```{r gen_var2}
-df_numeric <- df_sorted %>%
-  mutate(across(c(Studieschuld_NL, Studieschuld_UK, Studieschuld_US, Growth_NL, Growth_UK, Growth_US), ~as.numeric(.)),
-         Year = as.numeric(Year))
+#Preparing GDP data
 
-df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
+jaar_kolommen <- as.character(unlist(df4[3, ]))
+jaar_kolommen[is.na(jaar_kolommen)] <- paste0("V", which(is.na(jaar_kolommen)))
+df_gdp <- df4[4:6, ]
+colnames(df_gdp) <- jaar_kolommen
+df_gdp <- df_gdp %>%
+  select(`Country Name`, `2007`:`2023`)
 
+df_gdp_long <- df_gdp %>%
+  pivot_longer(
+    cols = -`Country Name`,
+    names_to = "Year",
+    values_to = "GDP_PC"
+  )
+df_gdp_long$GDP_PC <- as.numeric(df_gdp_long$GDP_PC)
+df_gdp_long$Year <- as.integer(df_gdp_long$Year)
+
+# Renaming and changing to wide format
+df_gdp_wide <- df_gdp_long %>%
+  pivot_wider(
+    names_from = `Country Name`,
+    values_from = GDP_PC
+  ) %>%
+  rename(
+    GDP_PC_UK = `United Kingdom`,
+    GDP_PC_NL = Netherlands,
+    GDP_PC_US = `United States`
+  ) %>%
+  arrange(Year)
+
+# Valuta conversion to euro
+df_gdp_wide <- df_gdp_wide %>%
+  mutate(
+    GDP_PC_UK = GDP_PC_UK * 0.86,
+    GDP_PC_NL = GDP_PC_NL * 0.86,
+    GDP_PC_US = GDP_PC_US * 0.85
+  )
+
+# Merging and making variable
+df_merged <- full_join(df_sorted, df_gdp_wide, by = "Year")
 df_merged <- df_merged %>%
   mutate(
     Schuld_GDP_NL = 100 * Studieschuld_NL / GDP_PC_NL,
     Schuld_GDP_UK = 100 * Studieschuld_UK / GDP_PC_UK,
     Schuld_GDP_US = 100 * Studieschuld_US / GDP_PC_US
   )
+
+
+
 
 ```
 Explain which variables you used/combined to create your new variable:
@@ -292,7 +347,7 @@ What do you intent to analyse/visualize using this variable:
 ```{r}
 
 #Procentual growth per year
-df_growth_long <- df_numeric %>%
+df_growth_long <- df_sorted %>%
   select(Year, Growth_NL, Growth_UK, Growth_US) %>%
   pivot_longer(
     cols = starts_with("Growth_"),
@@ -309,78 +364,24 @@ df_growth_long %>%
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
   scale_x_continuous(breaks = 2015:2024) +
-  theme_bw() +
   labs(
     title = "Procentual Growth of Student Debt (Since 2014)",
     x = "Year",
     y = "Growth compared to last year (%)",
     color = "Country"
-  )
+  ) +
+  theme_bw()
 
-ggsave("Temporal_Visualization2.png", width = 8, height = 5) 
+ggsave("Temporal_Visualization2.png", width = 8, height = 5)
 ```
 Short description of how this visualization aligns with your topic:
   - This graph aligns with our problem because it visualizes the percentage growth of student debt in the Netherlands, the UK, and the US. It shows that the UK has had the largest growth in student debt since 2016, followed by the Netherlands, while the US has experienced the lowest growth. The increase in student debt in the UK is likely due to Brexit, while in the Netherlands it may be attributed to a change in the student finance system, which did not work as intended. In recent years, under the new system, the growth has slowed down. Meanwhile, the growth of student debt in the US has remained relatively consistent.
   
   
-## 3.4 Visualize spatial variation
-
-```{r visualise_map}
-#means
-gemiddelde <- data_selected %>% 
-  summarise(
-    Studieschuld_NL = mean(Studieschuld_NL, na.rm=TRUE),
-    Studieschuld_UK = mean(Studieschuld_UK, na.rm=TRUE),
-    Studieschuld_US = mean(Studieschuld_US, na.rm=TRUE)
-  ) %>%
-  pivot_longer(everything(), names_to = "land", values_to = "gemiddelde_schuld") %>%
-  mutate(
-    land = recode(land,
-        Studieschuld_NL = "Netherlands",
-        Studieschuld_UK = "United Kingdom",
-        Studieschuld_US = "United States of America"
-    )
-  )
-
-
-# Worldmap
-wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
-
-
-wereldkaart_met_data <- wereldkaart %>%
-  left_join(gemiddelde, by = c("admin" = "land"))
-
-
-ggplot(wereldkaart_met_data) +
-  geom_sf(aes(fill = gemiddelde_schuld), color = "black") +
-  scale_fill_gradient(
-    low = "lightblue", 
-    high = "darkblue", 
-    na.value = "lightgrey",      # <- Grey for countries without data
-    name = "Mean Student Debt (€)",
-    labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")
-  ) +
-  coord_sf(
-    crs = 3857,
-    xlim = c(-1.35e7, 0.4e6),   # Left (US) to right (NL)
-    ylim = c(2.2e6, 8e6)       # Down (South US) to up (North UK)
-  ) +
-
-  labs(title = "Mean Student Debt (2007–2024)") +  
-  theme_bw()
-
-
-
-ggsave("Spatial_Visualization.png", width = 8, height = 5) 
-```
-Short description of how this visualization aligns with your topic:
-  - This map aligns with our topic because this visualises that the United States have the highest average debt, and the Netherlands the lowest average debt. This visualises that not all student loan systems have an equal financial risk, and the place where you study has a big impact on the height of the debts. This shows where students are most vulnerable for debts.
-
-
-## 3.5 Visualize sub-population variation
+## 3.4 Visualize sub-population variation
 
 ```{r visualise_subpopulations}
-data_selected <- df_numeric %>%
+data_selected <- df_sorted %>%
   select(Year, starts_with("Studieschuld"))
 
 # Converting data to long format
@@ -422,7 +423,58 @@ ggsave("Sub_Population.png", width = 8, height = 5)
 Short description of how this visualization aligns with your topic:
  - This boxplot shows that the average student debt in all countries clearly went up between 2020 and 2024, compared to 2014 to 2019. The median is higher, and the total range of debt is also bigger. This means that student debt has become a bigger problem for young people, especially during and after the COVID-19 period. Because of this, it has become harder for many to get a mortgage, which makes the housing shortage worse. The higher debt also causes more stress and worry, which affects young people’s mental health. On top of that, it increases the gap between rich and poor, because students from richer families are less affected.
 
+## 3.5 Visualize spatial variation
 
+```{r visualise_map}
+#means
+gemiddelde <- data_selected %>% 
+  summarise(
+    Studieschuld_NL = mean(Studieschuld_NL, na.rm=TRUE),
+    Studieschuld_UK = mean(Studieschuld_UK, na.rm=TRUE),
+    Studieschuld_US = mean(Studieschuld_US, na.rm=TRUE)
+  ) %>%
+  pivot_longer(everything(), names_to = "land", values_to = "gemiddelde_schuld") %>%
+  mutate(
+    land = recode(land,
+        Studieschuld_NL = "Netherlands",
+        Studieschuld_UK = "United Kingdom",
+        Studieschuld_US = "United States of America"
+    )
+  )
+
+
+# Worldmap
+wereldkaart <- ne_countries(scale = "medium", returnclass = "sf")
+
+wereldkaart_met_data <- wereldkaart %>%
+  left_join(gemiddelde, by = c("admin" = "land"))
+
+
+#Plot
+ggplot(wereldkaart_met_data) +
+  geom_sf(aes(fill = gemiddelde_schuld), color = "black") +
+  scale_fill_gradient(
+    low = "lightblue", 
+    high = "darkblue", 
+    na.value = "lightgrey",      # <- Grey for countries without data
+    name = "Mean Student Debt (€)",
+    labels = label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")
+  ) +
+  coord_sf(
+    crs = 3857,
+    xlim = c(-1.35e7, 0.4e6),   # Left (US) to right (NL)
+    ylim = c(2.2e6, 8e6)       # Down (South US) to up (North UK)
+  ) +
+
+  labs(title = "Mean Student Debt (2007–2024)") +  
+  theme_bw()
+
+
+
+ggsave("Spatial_Visualization.png", width = 8, height = 5) 
+```
+Short description of how this visualization aligns with your topic:
+  - This map aligns with our topic because this visualises that the United States have the highest average debt, and the Netherlands the lowest average debt. This visualises that not all student loan systems have an equal financial risk, and the place where you study has a big impact on the height of the debts. This shows where students are most vulnerable for debts.
 
 ## 3.6 Event analysis
 
@@ -430,45 +482,7 @@ Analyze the relationship between two variables.
 
 ```{r analysis}
 
-# Convert to long format
-df_gdp_wide <- df_gdp_long %>%
-  pivot_wider(
-    names_from = `Country Name`,
-    values_from = GDP_PC
-  ) %>%
-  rename(
-    GDP_PC_UK = `United Kingdom`,
-    GDP_PC_NL = Netherlands,
-    GDP_PC_US = `United States`
-  ) %>%
-  arrange(Year)
 
-
-
-# Convert Dollars to Euro's
-df_gdp_wide <- df_gdp_wide %>%
-  mutate(GDP_PC_UK = GDP_PC_UK * 0.86)
-
-df_gdp_wide <- df_gdp_wide %>%
-  mutate(GDP_PC_NL = GDP_PC_NL * 0.86)
-
-df_gdp_wide <- df_gdp_wide %>%
-  mutate(GDP_PC_US = GDP_PC_US * 0.85)
-
-
-
-# Merge with all other data and make new variable
-df_merged <- full_join(df_numeric, df_gdp_wide, by = "Year")
-
-df_merged <- df_merged %>%
-  mutate(
-    Schuld_GDP_NL = 100 * Studieschuld_NL / GDP_PC_NL,
-    Schuld_GDP_UK = 100 * Studieschuld_UK / GDP_PC_UK,
-    Schuld_GDP_US = 100 * Studieschuld_US / GDP_PC_US
-  )
-
-
-# Create plot
 df_long <- df_merged %>%
   select(Year, Schuld_GDP_NL, Schuld_GDP_UK, Schuld_GDP_US) %>%
   pivot_longer(
@@ -511,7 +525,7 @@ df_long %>%
       expand = c(0, 0),
       breaks = seq(0,150,25)
     ) +
-  scale_x_continuous(breaks = 2014:2023) 
+  scale_x_continuous(breaks = 2014:2023) +
   theme_bw()
 
 ggsave("Event_Analysis.png", width = 8, height = 5) 
