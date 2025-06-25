@@ -207,29 +207,6 @@ ggsave("Sub_Population.png", width = 8, height = 5)
 
 
 
-# # Alleen per periode groep maken (alle landen en jaren samen)
-# data_period <- data_long %>%
-#   group_by(period) %>%
-#   summarise(
-#     mean_studieschuld = mean(studieschuld, na.rm = TRUE),
-#     sd_studieschuld = sd(studieschuld, na.rm = TRUE),
-#     min_studieschuld = min(studieschuld, na.rm = TRUE),
-#     max_studieschuld = max(studieschuld, na.rm = TRUE),
-#     .groups = "drop"
-#   )
-# 
-# 
-# ggplot(data_long, aes(x = period, y = studieschuld)) +
-#   geom_boxplot(fill = "lightblue", color = "darkblue") +
-#   labs(title = "Student Debt Distribution per Period (All Countries and Years)",
-#        x = "Period",
-#        y = "Student Debt") +
-#   scale_y_continuous(labels = scales::label_dollar(prefix = "€", big.mark = ".", decimal.mark = ",")) +
-#   theme_bw()
-
-
-
-
 # ---- SPATIAL VISUALIZATION ----
 
 #Gemiddelden 
